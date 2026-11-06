@@ -1,0 +1,782 @@
+<!doctype html>
+<html lang="nl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content">
+<meta name="theme-color" content="#FF7A1A">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="Petit à petit">
+<title>Petit à petit</title>
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23FF7A1A'/%3E%3Ccircle cx='31' cy='35' r='17' fill='%23FFF7EE'/%3E%3Ccircle cx='37' cy='31' r='3' fill='%2323233A'/%3E%3Cpath d='M47 33l9 3-9 4z' fill='%23F2B705'/%3E%3C/svg%3E">
+<style>
+:root{
+  --bg:#FFF7EE; --surface:#FFFFFF; --surface-2:#FFF0E0; --ink:#23233A; --muted:#6E6A7C; --line:#F0DFCB;
+  --orange:#FF7A1A; --orange-deep:#D9560B; --orange-ink:#B54608; --sun:#F2B705;
+  --green:#178A57; --green-soft:#E2F5EA; --amber:#A86A00; --amber-soft:#FFF1CF; --red:#C93A32; --red-soft:#FCE6E3;
+  --grey-dot:#CFC7BD; --shadow:0 2px 0 rgba(35,35,58,.06), 0 8px 24px rgba(35,35,58,.06);
+  --r:20px;
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1A1A24; --surface:#252534; --surface-2:#2E2B33; --ink:#F5EFE8; --muted:#A9A3B5; --line:#363548;
+    --orange:#FF8A33; --orange-deep:#FF7A1A; --orange-ink:#FFAA66; --sun:#F2B705;
+    --green:#4CC98E; --green-soft:#1D3A2D; --amber:#F2C14E; --amber-soft:#3A3120; --red:#FF7A70; --red-soft:#3D2326;
+    --grey-dot:#55536A; --shadow:none;
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1A1A24; --surface:#252534; --surface-2:#2E2B33; --ink:#F5EFE8; --muted:#A9A3B5; --line:#363548;
+  --orange:#FF8A33; --orange-deep:#FF7A1A; --orange-ink:#FFAA66; --sun:#F2B705;
+  --green:#4CC98E; --green-soft:#1D3A2D; --amber:#F2C14E; --amber-soft:#3A3120; --red:#FF7A70; --red-soft:#3D2326;
+  --grey-dot:#55536A; --shadow:none;
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font:18px/1.4 system-ui,-apple-system,"Segoe UI",Roboto,"Noto Sans",sans-serif;min-height:100vh;min-height:100dvh;-webkit-tap-highlight-color:transparent}
+#app{max-width:520px;margin:0 auto;padding:max(12px,env(safe-area-inset-top)) 16px max(24px,env(safe-area-inset-bottom));min-height:100dvh;display:flex;flex-direction:column}
+button,input{font:inherit;color:inherit}
+button{cursor:pointer;-webkit-user-select:none;user-select:none}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;min-height:44px}
+.wordmark{font-weight:800;letter-spacing:-.01em;font-size:17px;color:var(--orange-ink)}
+.icon-btn{width:44px;height:44px;border-radius:14px;border:0;background:transparent;display:grid;place-items:center;color:var(--muted)}
+.icon-btn:active{background:var(--surface-2)}
+.icon-btn svg{width:24px;height:24px}
+.hero{display:flex;align-items:center;gap:14px;margin:8px 0 18px}
+.hero .bird{width:84px;height:84px;flex:none}
+.hero h1{margin:0;font-size:28px;line-height:1.1;font-weight:800;letter-spacing:-.02em}
+.hero p{margin:4px 0 0;color:var(--muted);font-size:16px}
+.chips{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px}
+.chip{display:inline-flex;align-items:center;gap:6px;background:var(--surface);border:1px solid var(--line);border-radius:999px;padding:6px 12px;font-size:15px;font-weight:700}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px;box-shadow:var(--shadow);margin-bottom:14px}
+.panel h2{margin:0 0 4px;font-size:15px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);font-weight:800}
+.today-counts{display:flex;gap:18px;margin:6px 0 16px}
+.today-counts div{display:flex;flex-direction:column}
+.today-counts b{font-size:34px;line-height:1;font-weight:800}
+.today-counts span{font-size:14px;color:var(--muted)}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:52px;padding:0 20px;border-radius:16px;border:0;font-weight:800;font-size:18px;transition:transform .08s ease}
+.btn:active{transform:translateY(2px)}
+.btn.primary{background:var(--orange);color:#fff;box-shadow:0 4px 0 var(--orange-deep)}
+.btn.primary:active{box-shadow:0 2px 0 var(--orange-deep)}
+.btn.primary:disabled{opacity:.45;box-shadow:none;transform:none}
+.btn.ghost{background:var(--surface-2);color:var(--ink)}
+.btn.block{width:100%}
+.btn.small{min-height:44px;font-size:16px;padding:0 14px;border-radius:13px}
+.done-msg{font-size:20px;font-weight:800;margin:6px 0 4px}
+.muted{color:var(--muted)}
+.small{font-size:15px}
+.seg{display:flex;height:12px;border-radius:99px;overflow:hidden;background:var(--grey-dot);margin:10px 0 8px}
+.seg i{display:block;height:100%}
+.drow{display:flex;align-items:center;gap:8px;margin-top:12px;font-weight:700;font-size:16px}
+.drow .dcount{margin-left:auto;color:var(--muted);font-size:14px;font-weight:600}
+.ddot{width:12px;height:12px;border-radius:4px;flex:none}
+.seg.slim{height:8px;margin:6px 0 0}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:14px;color:var(--muted)}
+.dot{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:0}
+.d-new{background:var(--grey-dot)} .d-learn{background:var(--orange)} .d-known{background:var(--green)}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.tile{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:14px;text-align:left;box-shadow:var(--shadow);min-height:76px}
+.tile b{display:block;font-size:17px}
+.tile span{font-size:14px;color:var(--muted)}
+.note-banner{font-size:14px;color:var(--muted);text-align:center;margin-top:10px}
+.note-banner button{border:0;background:none;color:var(--orange-ink);font-weight:700;text-decoration:underline;padding:4px}
+
+/* session */
+.sbar{display:flex;align-items:center;gap:10px;min-height:44px;margin-bottom:10px}
+.progress{flex:1;height:14px;background:var(--surface-2);border-radius:99px;overflow:hidden;border:1px solid var(--line)}
+.progress i{display:block;height:100%;background:var(--orange);border-radius:99px;transition:width .35s ease}
+.sstars{font-weight:800;font-size:16px;min-width:52px;text-align:right}
+.mode-tag{font-size:13px;font-weight:800;color:var(--orange-ink);text-transform:uppercase;letter-spacing:.06em;text-align:center;margin:-4px 0 6px}
+.qcard{background:var(--surface);border:1px solid var(--line);border-radius:24px;padding:18px 16px 16px;box-shadow:var(--shadow)}
+.qlabel{font-size:14px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;display:flex;align-items:center;justify-content:space-between;gap:8px;min-height:32px}
+.qtext{font-size:28px;font-weight:800;line-height:1.2;margin:8px 0 16px;letter-spacing:-.01em;overflow-wrap:anywhere}
+.qtext.fr{color:var(--orange-ink)}
+.qsub{font-size:20px;color:var(--muted);margin:-8px 0 16px}
+.say{display:inline-flex;align-items:center;justify-content:center;width:44px;height:44px;border-radius:14px;border:0;background:var(--surface-2);color:var(--orange-ink);flex:none}
+.say svg{width:24px;height:24px}
+.say.inline{width:38px;height:38px;border-radius:12px;vertical-align:middle;margin-left:6px}
+.answer{width:100%;min-height:56px;border:2px solid var(--line);border-radius:16px;background:var(--bg);padding:10px 14px;font-size:22px;font-weight:600;outline:none}
+.answer:focus{border-color:var(--orange)}
+.answer[readonly]{opacity:.8}
+.answer.s-ok{border-color:var(--green);background:var(--green-soft)}
+.answer.s-near{border-color:var(--amber);background:var(--amber-soft)}
+.answer.s-wrong{border-color:var(--red);background:var(--red-soft);text-decoration:line-through;text-decoration-thickness:2px}
+.accents{display:flex;gap:5px;margin:10px 0 12px}
+.accents button{flex:1 1 0;min-width:0;height:46px;border:1px solid var(--line);border-radius:12px;background:var(--surface-2);font-size:21px;font-weight:700;padding:0}
+.accents button:active{background:var(--orange);color:#fff}
+.row{display:flex;gap:10px}
+.row .btn{flex:1}
+.row .btn.ghost{flex:0 0 auto}
+.fb{border-radius:18px;padding:14px;margin-top:12px}
+.fb.ok{background:var(--green-soft)} .fb.near{background:var(--amber-soft)} .fb.wrong{background:var(--red-soft)}
+.fb-title{font-weight:800;font-size:20px;margin-bottom:4px}
+.fb.ok .fb-title{color:var(--green)} .fb.near .fb-title{color:var(--amber)} .fb.wrong .fb-title{color:var(--red)}
+.fb-note{font-size:16px;margin-bottom:6px}
+.fb-answer{font-size:22px;font-weight:800;display:flex;align-items:center;justify-content:space-between;gap:8px;overflow-wrap:anywhere}
+.fb-answer mark{background:none;color:var(--red);text-decoration:underline;text-decoration-thickness:3px;text-underline-offset:4px}
+.fb.near .fb-answer mark{color:var(--amber)}
+.retype-label{font-size:15px;font-weight:700;margin:14px 0 6px}
+.next-wrap{margin-top:12px}
+.opts{display:flex;flex-direction:column;gap:10px}
+.opt{min-height:56px;border-radius:16px;border:2px solid var(--line);background:var(--bg);text-align:left;padding:10px 14px;font-size:19px;font-weight:700;display:flex;align-items:center;justify-content:space-between;gap:10px}
+.opt:active{border-color:var(--orange)}
+.opt.ok{border-color:var(--green);background:var(--green-soft);color:var(--green)}
+.opt.bad{border-color:var(--red);background:var(--red-soft);color:var(--red)}
+.opt.dim{opacity:.5}
+.intro-badge{display:inline-block;background:var(--sun);color:#23233A;border-radius:99px;padding:3px 10px;font-size:13px;font-weight:800;letter-spacing:.04em}
+.divider{height:1px;background:var(--line);margin:4px 0 14px}
+.pop{animation:pop .35s ease}
+@keyframes pop{0%{transform:scale(.96)}60%{transform:scale(1.02)}100%{transform:scale(1)}}
+.shake{animation:shake .35s ease}
+@keyframes shake{20%{transform:translateX(-6px)}40%{transform:translateX(6px)}60%{transform:translateX(-4px)}80%{transform:translateX(3px)}}
+
+/* end */
+.end{text-align:center;padding-top:18px}
+.end .bird{width:130px;height:130px}
+.end h1{font-size:30px;margin:10px 0 6px}
+.statrow{display:flex;justify-content:center;gap:12px;margin:18px 0 24px;flex-wrap:wrap}
+.stat{background:var(--surface);border:1px solid var(--line);border-radius:18px;padding:12px 16px;min-width:92px}
+.stat b{display:block;font-size:26px}
+.stat span{font-size:13px;color:var(--muted)}
+
+/* words & settings */
+.page-title{font-size:24px;font-weight:800;margin:0}
+.wlist{display:flex;flex-direction:column;gap:8px;margin-top:12px}
+.witem{background:var(--surface);border:1px solid var(--line);border-radius:16px;padding:10px 12px;display:flex;align-items:center;gap:10px}
+.witem .txt{flex:1;min-width:0}
+.witem .nl{font-size:15px;color:var(--muted)}
+.witem .fr{font-size:18px;font-weight:700;color:var(--orange-ink)}
+.pills{display:flex;gap:6px;flex-wrap:wrap;margin-top:6px}
+.pill{font-size:12px;font-weight:800;border-radius:99px;padding:2px 8px;white-space:nowrap}
+.p-new{background:var(--surface-2);color:var(--muted)} .p-learn{background:var(--amber-soft);color:var(--amber)} .p-known{background:var(--green-soft);color:var(--green)}
+.sect{margin-top:18px}
+.sect h3{margin:0 0 8px;font-size:14px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted)}
+.setrow{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line)}
+.setrow:last-child{border-bottom:0}
+.setrow label{flex:1}
+.setrow .hint{display:block;font-size:13px;color:var(--muted)}
+.stepper{display:flex;align-items:center;gap:8px}
+.stepper b{min-width:30px;text-align:center;font-size:20px}
+.stepper button{width:44px;height:44px;border-radius:12px;border:1px solid var(--line);background:var(--surface-2);font-size:22px;font-weight:800}
+.textin{min-height:44px;border:2px solid var(--line);border-radius:12px;background:var(--bg);padding:6px 10px;width:150px}
+.switch{appearance:none;-webkit-appearance:none;width:52px;height:32px;border-radius:99px;background:var(--grey-dot);position:relative;flex:none;cursor:pointer;transition:background .2s}
+.switch::after{content:"";position:absolute;top:3px;left:3px;width:26px;height:26px;border-radius:50%;background:#fff;transition:left .2s}
+.switch:checked{background:var(--green)}
+.switch:checked::after{left:23px}
+.stack{display:flex;flex-direction:column;gap:10px}
+.fine{font-size:13px;color:var(--muted);margin-top:22px;line-height:1.5}
+.toast{position:fixed;left:50%;bottom:max(20px,env(safe-area-inset-bottom));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:14px;font-size:15px;font-weight:700;z-index:50;max-width:90vw;text-align:center}
+.confetti{position:fixed;inset:0;pointer-events:none;overflow:hidden;z-index:40}
+.confetti i{position:absolute;top:-20px;width:10px;height:14px;border-radius:3px;animation:fall linear forwards}
+@keyframes fall{to{transform:translateY(110vh) rotate(720deg)}}
+@media (prefers-reduced-motion: reduce){.pop,.shake{animation:none}.progress i{transition:none}.confetti{display:none}}
+@media (min-width:480px){.qtext{font-size:32px}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/*! ts-fsrs | MIT License | Copyright (c) Open Spaced Repetition | https://github.com/open-spaced-repetition/ts-fsrs */
+!function(t,e){"object"==typeof exports&&"undefined"!=typeof module?e(exports):"function"==typeof define&&define.amd?define(["exports"],e):e((t="undefined"!=typeof globalThis?globalThis:t||self).FSRS={})}(this,function(t){"use strict";class e extends Error{constructor(t="FSRS Error"){var r;super(t),this.name="FSRSError",null==(r=Error.captureStackTrace)||r.call(Error,this,e)}}class r extends e{constructor(t){var e;super(t),this.name="FSRSValidationError",null==(e=Error.captureStackTrace)||e.call(Error,this,r)}}var i=(t=>(t[t.New=0]="New",t[t.Learning=1]="Learning",t[t.Review=2]="Review",t[t.Relearning=3]="Relearning",t))(i||{}),s=(t=>(t[t.Manual=0]="Manual",t[t.Again=1]="Again",t[t.Hard=2]="Hard",t[t.Good=3]="Good",t[t.Easy=4]="Easy",t))(s||{}),a=Object.defineProperty,n=Object.defineProperties,l=Object.getOwnPropertyDescriptors,o=Object.getOwnPropertySymbols,u=Object.prototype.hasOwnProperty,d=Object.prototype.propertyIsEnumerable,h=(t,e,r)=>e in t?a(t,e,{enumerable:!0,configurable:!0,writable:!0,value:r}):t[e]=r,c=(t,e)=>{for(var r in e||(e={}))u.call(e,r)&&h(t,r,e[r]);if(o)for(var r of o(e))d.call(e,r)&&h(t,r,e[r]);return t},_=(t,e)=>n(t,l(e));class f{static card(t){return _(c({},t),{state:f.state(t.state),due:f.time(t.due),last_review:t.last_review?f.time(t.last_review):void 0})}static rating(t){if("string"==typeof t){const e=t.charAt(0).toUpperCase(),i=t.slice(1).toLowerCase(),a=s[`${e}${i}`];if(void 0===a)throw new r(`Invalid rating:[${t}]`);return a}if("number"==typeof t)return t;throw new r(`Invalid rating:[${t}]`)}static state(t){if("string"==typeof t){const e=t.charAt(0).toUpperCase(),s=t.slice(1).toLowerCase(),a=i[`${e}${s}`];if(void 0===a)throw new r(`Invalid state:[${t}]`);return a}if("number"==typeof t)return t;throw new r(`Invalid state:[${t}]`)}static time(t){if(t instanceof Date)return t;const e=new Date(t);if("object"==typeof t&&null!==t&&!Number.isNaN(Date.parse(t)||+e))return e;if("string"==typeof t){const e=Date.parse(t);if(Number.isNaN(e))throw new r(`Invalid date:[${t}]`);return new Date(e)}if("number"==typeof t)return new Date(t);throw new r(`Invalid date:[${t}]`)}static review_log(t){return _(c({},t),{due:f.time(t.due),rating:f.rating(t.rating),state:f.state(t.state),review:f.time(t.review)})}}function p(t,e,r){return new Date(r?f.time(t).getTime()+24*e*60*60*1e3:f.time(t).getTime()+60*e*1e3)}function g(t,e,i){if(!t||!e)throw new r("Invalid date");const s=f.time(t).getTime()-f.time(e).getTime();let a=0;switch(i){case"days":a=Math.floor(s/864e5);break;case"minutes":a=Math.floor(s/6e4)}return a}function y(t){const e=f.time(t),r=e.getFullYear(),i=e.getMonth()+1,s=e.getDate(),a=e.getHours(),n=e.getMinutes(),l=e.getSeconds();return`${r}-${m(i)}-${m(s)} ${m(a)}:${m(n)}:${m(l)}`}function m(t){return t<10?`0${t}`:`${t}`}Date.prototype.scheduler=function(t,e){return p(this,t,e)},Date.prototype.diff=function(t,e){return g(this,t,e)},Date.prototype.format=function(){return y(this)},Date.prototype.dueFormat=function(t,e,r){return b(this,t,e,r)};const w=[60,60,24,31,12],v=["second","min","hour","day","month","year"];function b(t,e,r,i=v){t=f.time(t),e=f.time(e),i.length!==v.length&&(i=v);let s=t.getTime()-e.getTime(),a=0;for(s/=1e3,a=0;a<w.length&&!(s<w[a]);a++)s/=w[a];return`${Math.floor(s)}${r?i[a]:""}`}const x=Object.freeze([s.Again,s.Hard,s.Good,s.Easy]),M=[{start:2.5,end:7,factor:.15},{start:7,end:20,factor:.1},{start:20,end:1/0,factor:.05}];function S(t,e,r){let i=1;for(const e of M)i+=e.factor*Math.max(Math.min(t,e.end)-e.start,0);t=Math.min(t,r);let s=Math.max(2,Math.round(t-i));const a=Math.min(Math.round(t+i),r);return t>e&&(s=Math.max(s,e+1)),s=Math.min(s,a),{min_ivl:s,max_ivl:a}}function R(t,e,r){return Math.min(Math.max(t,e),r)}function E(t,e){const r=10**e;return Math.round(t*r)/r}function A(t,e){const r=Date.UTC(t.getUTCFullYear(),t.getUTCMonth(),t.getUTCDate()),i=Date.UTC(e.getUTCFullYear(),e.getUTCMonth(),e.getUTCDate());return Math.floor((i-r)/864e5)}const N=t=>{const e=t.slice(-1),i=parseInt(t.slice(0,-1),10);if(Number.isNaN(i)||!Number.isFinite(i)||i<0)throw new r(`Invalid step value: ${t}`);switch(e){case"m":return i;case"h":return 60*i;case"d":return 1440*i;default:throw new r(`Invalid step unit: ${t}, expected m/h/d`)}},D=(t,e,r)=>{const a=e===i.Relearning||e===i.Review?t.relearning_steps:t.learning_steps,n=a.length;if(0===n||r>=n)return{};const l=a[0],o=N,u=()=>{if(1===n)return Math.round(1.5*o(l));const t=a[1];return Math.round((o(l)+o(t))/2)},d=t=>t<0||t>=n?null:a[t],h={},c=d(Math.max(0,r));if(e===i.Review)return h[s.Again]={scheduled_minutes:o(c),next_step:0},h;{h[s.Again]={scheduled_minutes:o(l),next_step:0},h[s.Hard]={scheduled_minutes:u(),next_step:r};const t=d(r+1);if(t){const e=o(t);e&&(h[s.Good]={scheduled_minutes:Math.round(e),next_step:r+1})}}return h};function O(){return`${this.review_time.getTime()}_${this.current.reps}_${this.current.difficulty*this.current.stability}`}var L=(t=>(t.SCHEDULER="Scheduler",t.LEARNING_STEPS="LearningSteps",t.SEED="Seed",t))(L||{}),$=Object.defineProperty,F=(t,e,r)=>((t,e,r)=>e in t?$(t,e,{enumerable:!0,configurable:!0,writable:!0,value:r}):t[e]=r)(t,"symbol"!=typeof e?e+"":e,r);class I{constructor(t,e,r,i){F(this,"last"),F(this,"current"),F(this,"review_time"),F(this,"next",new Map),F(this,"algorithm"),F(this,"strategies"),F(this,"elapsed_days",0),this.algorithm=r,this.last=f.card(t),this.current=f.card(t),this.review_time=f.time(e),this.strategies=i,this.init()}checkGrade(t){if(!Number.isFinite(t)||t<1||t>4)throw new r(`Invalid grade "${t}",expected 1-4`)}init(){const{state:t,last_review:e}=this.current;let r=0;t!==i.New&&e&&(r=A(e,this.review_time)),this.current.last_review=this.review_time,this.elapsed_days=r,this.current.elapsed_days=r,this.current.reps+=1;let s=O;if(this.strategies){const t=this.strategies.get(L.SEED);t&&(s=t)}this.algorithm.seed=s.call(this)}preview(){return{[s.Again]:this.review(s.Again),[s.Hard]:this.review(s.Hard),[s.Good]:this.review(s.Good),[s.Easy]:this.review(s.Easy),[Symbol.iterator]:this.previewIterator.bind(this)}}*previewIterator(){for(const t of x)yield this.review(t)}review(t){const{state:e}=this.last;let r;switch(this.checkGrade(t),e){case i.New:r=this.newState(t);break;case i.Learning:case i.Relearning:r=this.learningState(t);break;case i.Review:r=this.reviewState(t)}return r}buildLog(t){const{last_review:e,due:r,elapsed_days:i}=this.last;return{rating:t,state:this.current.state,due:e||r,stability:this.current.stability,difficulty:this.current.difficulty,elapsed_days:this.elapsed_days,last_elapsed_days:i,scheduled_days:this.current.scheduled_days,learning_steps:this.current.learning_steps,review:this.review_time}}}var T=Object.defineProperty,j=(t,e,r)=>((t,e,r)=>e in t?T(t,e,{enumerable:!0,configurable:!0,writable:!0,value:r}):t[e]=r)(t,"symbol"!=typeof e?e+"":e,r);class P{constructor(t){j(this,"c"),j(this,"s0"),j(this,"s1"),j(this,"s2");const e=function(){let t=4022871197;return function(e){e=String(e);for(let r=0;r<e.length;r++){t+=e.charCodeAt(r);let i=.02519603282416938*t;t=i>>>0,i-=t,i*=t,t=i>>>0,i-=t,t+=4294967296*i}return 2.3283064365386963e-10*(t>>>0)}}();this.c=1,this.s0=e(" "),this.s1=e(" "),this.s2=e(" "),null==t&&(t=Date.now()),this.s0-=e(t),this.s0<0&&(this.s0+=1),this.s1-=e(t),this.s1<0&&(this.s1+=1),this.s2-=e(t),this.s2<0&&(this.s2+=1)}next(){const t=2091639*this.s0+2.3283064365386963e-10*this.c;return this.s0=this.s1,this.s1=this.s2,this.c=0|t,this.s2=t-this.c,this.s2}set state(t){this.c=t.c,this.s0=t.s0,this.s1=t.s1,this.s2=t.s2}get state(){return{c:this.c,s0:this.s0,s1:this.s1,s2:this.s2}}}const C=!1,H=!0,G=Object.freeze(["1m","10m"]),z=Object.freeze(["10m"]),U=.001,k=100,q=.1542,Y=Object.freeze([.212,1.2931,2.3065,8.2956,6.4133,.8334,3.0194,.001,1.8722,.1666,.796,1.4835,.0614,.2629,1.6483,.6014,1.8729,.5425,.0912,.0658,q]),W=(t,e=true)=>[[U,k],[U,k],[U,k],[U,k],[1,10],[.001,4],[.001,4],[.001,.75],[0,4.5],[0,.8],[.001,3.5],[.001,5],[.001,.25],[.001,.9],[0,4],[0,1],[1,6],[0,t],[0,t],[e?.01:0,.8],[.1,.8]],B=(t,e,r=true)=>{const i=W(2,r).slice(0,t.length);if(Math.max(0,e)>1){const r=R(t[11]||0,i[11][0],i[11][1]),s=R(t[13]||0,i[13][0],i[13][1]),a=R(t[14]||0,i[14][0],i[14][1]),n=-(Math.log(r)+Math.log(Math.pow(2,s)-1)+.3*a)/e,l=R(E(Math.sqrt(Math.max(n,0)),8),.01,2);i[17]&&(i[17]=[i[17][0],l]),i[18]&&(i[18]=[i[18][0],l])}return i.map(([e,r],i)=>R(t[i]||0,e,r))},V=(t,e=0,r=true)=>{if(void 0===t)return[...Y];switch(t.length){case 21:return B(Array.from(t),e,r);case 19:return console.debug("[FSRS-6]auto fill w from 19 to 21 length"),B(Array.from(t),e,r).concat([0,.5]);case 17:{const i=B(Array.from(t),e,r);return i[4]=+(2*i[5]+i[4]).toFixed(8),i[5]=+(Math.log(3*i[5]+1)/3).toFixed(8),i[6]=+(i[6]+.5).toFixed(8),console.debug("[FSRS-6]auto fill w from 17 to 21 length"),i.concat([0,0,0,.5])}default:return console.warn("[FSRS]Invalid parameters length, using default parameters"),[...Y]}},X=t=>{var e,r;const i=Array.isArray(null==t?void 0:t.learning_steps)?t.learning_steps:G,s=Array.isArray(null==t?void 0:t.relearning_steps)?t.relearning_steps:z,a=null!=(e=null==t?void 0:t.enable_short_term)?e:H,n=V(null==t?void 0:t.w,s.length,a);return{request_retention:(null==t?void 0:t.request_retention)||.9,maximum_interval:(null==t?void 0:t.maximum_interval)||36500,w:n,enable_fuzz:null!=(r=null==t?void 0:t.enable_fuzz)?r:C,enable_short_term:a,learning_steps:i,relearning_steps:s}};function J(t,e){const r={due:t?f.time(t):new Date,stability:0,difficulty:0,elapsed_days:0,scheduled_days:0,reps:0,lapses:0,learning_steps:0,state:i.New,last_review:void 0};return e&&"function"==typeof e?e(r):r}var K=Object.defineProperty,Q=(t,e,r)=>((t,e,r)=>e in t?K(t,e,{enumerable:!0,configurable:!0,writable:!0,value:r}):t[e]=r)(t,"symbol"!=typeof e?e+"":e,r);const Z=t=>{const e="number"==typeof t?-t:-t[20];return{decay:e,factor:E(Math.exp(Math.pow(e,-1)*Math.log(.9))-1,8)}};function tt(t,e,r){const{decay:i,factor:s}=Z(t);return E(Math.pow(1+s*e/r,i),8)}class et{constructor(t){Q(this,"param"),Q(this,"intervalModifier"),Q(this,"_seed"),Q(this,"prepare_parameters",t=>{const e=X(t);return e.w=B(Array.from(e.w),e.relearning_steps.length,e.enable_short_term),e}),Q(this,"forgetting_curve"),this.param=new Proxy(this.prepare_parameters(t),this.params_handler_proxy()),this.intervalModifier=this.calculate_interval_modifier(this.param.request_retention),this.forgetting_curve=tt.bind(this,this.param.w)}get interval_modifier(){return this.intervalModifier}set seed(t){this._seed=t}calculate_interval_modifier(t){if(t<=0||t>1)throw new r("Requested retention rate should be in the range (0,1]");const{decay:e,factor:i}=Z(this.param.w);return E((Math.pow(t,1/e)-1)/i,8)}get parameters(){return this.param}set parameters(t){this.update_parameters(t)}params_handler_proxy(){const t=this;return{set:function(e,r,i){return"request_retention"===r&&Number.isFinite(i)?t.intervalModifier=t.calculate_interval_modifier(Number(i)):"w"===r&&(i=V(i,e.relearning_steps.length,e.enable_short_term),i=B(Array.from(i),e.relearning_steps.length,e.enable_short_term),t.forgetting_curve=tt.bind(this,i),t.intervalModifier=t.calculate_interval_modifier(Number(e.request_retention))),Reflect.set(e,r,i),!0}}}update_parameters(t){const e=this.prepare_parameters(t);for(const t in e){const r=t;this.param[r]=e[r]}}init_stability(t){return Math.max(this.param.w[t-1],.1)}init_difficulty(t){const e=this.param.w;return E(e[4]-Math.exp((t-1)*e[5])+1,8)}apply_fuzz(t,e){if(!this.param.enable_fuzz||t<2.5)return Math.round(t);const r=function(t){const e=new P(t),r=()=>e.next();return r.int32=()=>4294967296*e.next()|0,r.double=()=>r()+11102230246251565e-32*(2097152*r()|0),r.state=()=>e.state,r.importState=t=>(e.state=t,r),r}(this._seed)(),{min_ivl:i,max_ivl:s}=S(t,e,this.param.maximum_interval);return Math.floor(r*(s-i+1)+i)}next_interval(t,e){const r=Math.min(Math.max(1,Math.round(t*this.intervalModifier)),this.param.maximum_interval);return this.apply_fuzz(r,e)}linear_damping(t,e){return E(t*(10-e)/9,8)}next_difficulty(t,e){const r=-this.param.w[6]*(e-3),i=t+this.linear_damping(r,t);return R(this.mean_reversion(this.init_difficulty(s.Easy),i),1,10)}mean_reversion(t,e){const r=this.param.w;return E(r[7]*t+(1-r[7])*e,8)}next_recall_stability(t,e,r,i){const a=this.param.w,n=s.Hard===i?a[15]:1,l=s.Easy===i?a[16]:1;return E(R(e*(1+Math.exp(a[8])*(11-t)*Math.pow(e,-a[9])*(Math.exp((1-r)*a[10])-1)*n*l),U,36500),8)}next_forget_stability(t,e,r){const i=this.param.w;return E(R(i[11]*Math.pow(t,-i[12])*(Math.pow(e+1,i[13])-1)*Math.exp((1-r)*i[14]),U,36500),8)}next_short_term_stability(t,e){const r=this.param.w,i=Math.pow(t,-r[19])*Math.exp(r[17]*(e-3+r[18]));return E(R(t*(e>=s.Hard?Math.max(i,1):i),U,36500),8)}next_state(t,e,i,s){const{difficulty:a,stability:n}=null!=t?t:{difficulty:0,stability:0};if(e<0)throw new r(`Invalid delta_t "${e}"`);if(i<0||i>4)throw new r(`Invalid grade "${i}"`);if(0===a&&0===n)return{difficulty:R(this.init_difficulty(i),1,10),stability:this.init_stability(i)};if(0===i)return{difficulty:a,stability:n};if(a<1||n<U)throw new r(`Invalid memory state { difficulty: ${a}, stability: ${n} }`);const l=this.param.w;let o;if(s="number"==typeof s?s:this.forgetting_curve(e,n),0===e&&this.param.enable_short_term)o=this.next_short_term_stability(n,i);else if(1===i){const t=this.next_forget_stability(a,n,s);let[e,r]=[0,0];this.param.enable_short_term&&(e=l[17],r=l[18]);o=R(E(n/Math.exp(e*r),8),U,t)}else o=this.next_recall_stability(a,n,s,i);return{difficulty:this.next_difficulty(a,i),stability:o}}}var rt=Object.defineProperty,it=(t,e,r)=>((t,e,r)=>e in t?rt(t,e,{enumerable:!0,configurable:!0,writable:!0,value:r}):t[e]=r)(t,e+"",r);class st extends I{constructor(t,e,r,i){super(t,e,r,i),it(this,"learningStepsStrategy");let s=D;if(this.strategies){const t=this.strategies.get(L.LEARNING_STEPS);t&&(s=t)}this.learningStepsStrategy=s}getLearningInfo(t,e){var r,i,s,a;const n=this.algorithm.parameters;t.learning_steps=t.learning_steps||0;const l=this.learningStepsStrategy(n,t.state,t.learning_steps);return{scheduled_minutes:Math.max(0,null!=(i=null==(r=l[e])?void 0:r.scheduled_minutes)?i:0),next_steps:Math.max(0,null!=(a=null==(s=l[e])?void 0:s.next_step)?a:0)}}applyLearningSteps(t,e,r){const{scheduled_minutes:s,next_steps:a}=this.getLearningInfo(this.current,e);if(s>0&&s<1440)t.learning_steps=a,t.scheduled_days=0,t.state=r,t.due=p(this.review_time,Math.round(s),!1);else if(t.state=i.Review,s>=1440)t.learning_steps=a,t.due=p(this.review_time,Math.round(s),!1),t.scheduled_days=Math.floor(s/1440);else{t.learning_steps=0;const e=this.algorithm.next_interval(t.stability,this.elapsed_days);t.scheduled_days=e,t.due=p(this.review_time,e,!0)}}newState(t){const e=this.next.get(t);if(e)return e;const r=this.next_ds(this.elapsed_days,t);this.applyLearningSteps(r,t,i.Learning);const s={card:r,log:this.buildLog(t)};return this.next.set(t,s),s}learningState(t){const e=this.next.get(t);if(e)return e;const r=this.next_ds(this.elapsed_days,t);this.applyLearningSteps(r,t,this.last.state);const i={card:r,log:this.buildLog(t)};return this.next.set(t,i),i}reviewState(t){const e=this.next.get(t);if(e)return e;const r=this.elapsed_days,a=this.algorithm.forgetting_curve(r,this.current.stability),n=this.next_ds(r,s.Again,a),l=this.next_ds(r,s.Hard,a),o=this.next_ds(r,s.Good,a),u=this.next_ds(r,s.Easy,a);this.next_interval(l,o,u,r),this.next_state(l,o,u),this.applyLearningSteps(n,s.Again,i.Relearning),n.lapses+=1;const d={card:n,log:this.buildLog(s.Again)},h={card:l,log:super.buildLog(s.Hard)},c={card:o,log:super.buildLog(s.Good)},_={card:u,log:super.buildLog(s.Easy)};return this.next.set(s.Again,d),this.next.set(s.Hard,h),this.next.set(s.Good,c),this.next.set(s.Easy,_),this.next.get(t)}next_ds(t,e,r){const i=this.algorithm.next_state({difficulty:this.current.difficulty,stability:this.current.stability},t,e,r),s=f.card(this.current);return s.difficulty=i.difficulty,s.stability=i.stability,s}next_interval(t,e,r,i){let s,a;s=this.algorithm.next_interval(t.stability,i),a=this.algorithm.next_interval(e.stability,i),s=Math.min(s,a),a=Math.max(a,s+1);const n=Math.max(this.algorithm.next_interval(r.stability,i),a+1);t.scheduled_days=s,t.due=p(this.review_time,s,!0),e.scheduled_days=a,e.due=p(this.review_time,a,!0),r.scheduled_days=n,r.due=p(this.review_time,n,!0)}next_state(t,e,r){t.state=i.Review,t.learning_steps=0,e.state=i.Review,e.learning_steps=0,r.state=i.Review,r.learning_steps=0}}class at extends I{newState(t){const e=this.next.get(t);if(e)return e;this.current.scheduled_days=0,this.current.elapsed_days=0;const r=this.next_ds(0,s.Again),i=this.next_ds(0,s.Hard),a=this.next_ds(0,s.Good),n=this.next_ds(0,s.Easy);return this.next_interval(r,i,a,n,0),this.next_state(r,i,a,n),this.update_next(r,i,a,n),this.next.get(t)}next_ds(t,e,r){const i=this.algorithm.next_state({difficulty:this.current.difficulty,stability:this.current.stability},t,e,r),s=f.card(this.current);return s.difficulty=i.difficulty,s.stability=i.stability,s}learningState(t){return this.reviewState(t)}reviewState(t){const e=this.next.get(t);if(e)return e;const r=this.elapsed_days,i=this.algorithm.forgetting_curve(r,this.current.stability),a=this.next_ds(r,s.Again,i),n=this.next_ds(r,s.Hard,i),l=this.next_ds(r,s.Good,i),o=this.next_ds(r,s.Easy,i);return this.next_interval(a,n,l,o,r),this.next_state(a,n,l,o),a.lapses+=1,this.update_next(a,n,l,o),this.next.get(t)}next_interval(t,e,r,i,s){let a,n,l,o;a=this.algorithm.next_interval(t.stability,s),n=this.algorithm.next_interval(e.stability,s),l=this.algorithm.next_interval(r.stability,s),o=this.algorithm.next_interval(i.stability,s),a=Math.min(a,n),n=Math.max(n,a+1),l=Math.max(l,n+1),o=Math.max(o,l+1),t.scheduled_days=a,t.due=p(this.review_time,a,!0),e.scheduled_days=n,e.due=p(this.review_time,n,!0),r.scheduled_days=l,r.due=p(this.review_time,l,!0),i.scheduled_days=o,i.due=p(this.review_time,o,!0)}next_state(t,e,r,s){t.state=i.Review,t.learning_steps=0,e.state=i.Review,e.learning_steps=0,r.state=i.Review,r.learning_steps=0,s.state=i.Review,s.learning_steps=0}update_next(t,e,r,i){const a={card:t,log:this.buildLog(s.Again)},n={card:e,log:super.buildLog(s.Hard)},l={card:r,log:super.buildLog(s.Good)},o={card:i,log:super.buildLog(s.Easy)};this.next.set(s.Again,a),this.next.set(s.Hard,n),this.next.set(s.Good,l),this.next.set(s.Easy,o)}}var nt=Object.defineProperty,lt=Object.defineProperties,ot=Object.getOwnPropertyDescriptors,ut=Object.getOwnPropertySymbols,dt=Object.prototype.hasOwnProperty,ht=Object.prototype.propertyIsEnumerable,ct=(t,e,r)=>e in t?nt(t,e,{enumerable:!0,configurable:!0,writable:!0,value:r}):t[e]=r;class _t{constructor(t){var e;ct(this,"fsrs"+"",e),this.fsrs=t}replay(t,e,r){return this.fsrs.next(t,e,r)}handleManualRating(t,e,a,n,l,o,u){if(void 0===e)throw new r("reschedule: state is required for manual rating");let d,h;if(e===i.New)d={rating:s.Manual,state:e,due:null!=u?u:a,stability:t.stability,difficulty:t.difficulty,elapsed_days:n,last_elapsed_days:t.elapsed_days,scheduled_days:t.scheduled_days,learning_steps:t.learning_steps,review:a},h=J(a),h.last_review=a;else{if(void 0===u)throw new r("reschedule: due is required for manual rating");const i=g(u,a,"days");d={rating:s.Manual,state:t.state,due:t.last_review||t.due,stability:t.stability,difficulty:t.difficulty,elapsed_days:n,last_elapsed_days:t.elapsed_days,scheduled_days:t.scheduled_days,learning_steps:t.learning_steps,review:a},c=((t,e)=>{for(var r in e||(e={}))dt.call(e,r)&&ct(t,r,e[r]);if(ut)for(var r of ut(e))ht.call(e,r)&&ct(t,r,e[r]);return t})({},t),_={state:e,due:u,last_review:a,stability:l||t.stability,difficulty:o||t.difficulty,elapsed_days:n,scheduled_days:i,reps:t.reps+1},h=lt(c,ot(_))}var c,_;return{card:h,log:d}}reschedule(t,e){const r=[];let a=J(t.due);for(const t of e){let e;if(t.review=f.time(t.review),t.rating===s.Manual){let r=0;a.state!==i.New&&a.last_review&&(r=g(t.review,a.last_review,"days")),e=this.handleManualRating(a,t.state,t.review,r,t.stability,t.difficulty,t.due?f.time(t.due):void 0)}else e=this.replay(a,t.review,t.rating);r.push(e),a=e.card}return r}calculateManualRecord(t,e,r,i){if(!r)return null;const{card:s,log:a}=r,n=f.card(t);return n.due.getTime()===s.due.getTime()?null:(n.scheduled_days=g(s.due,n.due,"days"),this.handleManualRating(n,s.state,f.time(e),a.elapsed_days,i?s.stability:void 0,i?s.difficulty:void 0,s.due))}}var ft=Object.defineProperty,pt=Object.defineProperties,gt=Object.getOwnPropertyDescriptors,yt=Object.getOwnPropertySymbols,mt=Object.prototype.hasOwnProperty,wt=Object.prototype.propertyIsEnumerable,vt=(t,e,r)=>e in t?ft(t,e,{enumerable:!0,configurable:!0,writable:!0,value:r}):t[e]=r,bt=(t,e)=>{for(var r in e||(e={}))mt.call(e,r)&&vt(t,r,e[r]);if(yt)for(var r of yt(e))wt.call(e,r)&&vt(t,r,e[r]);return t},xt=(t,e)=>pt(t,gt(e)),Mt=(t,e,r)=>vt(t,"symbol"!=typeof e?e+"":e,r);function St(t,e){return"function"==typeof e?e(t):t}class Rt extends et{constructor(t){super(t),Mt(this,"strategyHandler",new Map),Mt(this,"Scheduler");const{enable_short_term:e}=this.parameters;this.Scheduler=e?st:at}params_handler_proxy(){const t=this;return{set:function(e,r,i){return"request_retention"===r&&Number.isFinite(i)?t.intervalModifier=t.calculate_interval_modifier(Number(i)):"enable_short_term"===r?t.Scheduler=!0===i?st:at:"w"===r&&(i=V(i,e.relearning_steps.length,e.enable_short_term),i=B(Array.from(i),e.relearning_steps.length,e.enable_short_term),t.forgetting_curve=tt.bind(this,i),t.intervalModifier=t.calculate_interval_modifier(Number(e.request_retention))),Reflect.set(e,r,i),!0}}}useStrategy(t,e){return this.strategyHandler.set(t,e),this}clearStrategy(t){return t?this.strategyHandler.delete(t):this.strategyHandler.clear(),this}getScheduler(t,e){return new(this.strategyHandler.get(L.SCHEDULER)||this.Scheduler)(t,e,this,this.strategyHandler)}repeat(t,e,r){return St(this.getScheduler(t,e).preview(),r)}next(t,e,i,a){const n=this.getScheduler(t,e),l=f.rating(i);if(l===s.Manual)throw new r("Cannot review a manual rating");return St(n.review(l),a)}get_retrievability(t,e,r=!0){const s=f.card(t);e=e?f.time(e):new Date;const a=s.state!==i.New?Math.max(g(e,s.last_review,"days"),0):0,n=s.state!==i.New?this.forgetting_curve(a,+s.stability.toFixed(8)):0;return r?`${(100*n).toFixed(2)}%`:n}rollback(t,e,a){const n=f.card(t),l=f.review_log(e);if(l.rating===s.Manual)throw new r("Cannot rollback a manual rating");let o,u,d;switch(l.state){case i.New:o=l.due,u=void 0,d=0;break;case i.Learning:case i.Relearning:case i.Review:o=l.review,u=l.due,d=n.lapses-(l.rating===s.Again&&l.state===i.Review?1:0)}return St(xt(bt({},n),{due:o,stability:l.stability,difficulty:l.difficulty,elapsed_days:l.last_elapsed_days,scheduled_days:l.scheduled_days,reps:Math.max(0,n.reps-1),lapses:Math.max(0,d),learning_steps:l.learning_steps,state:l.state,last_review:u}),a)}forget(t,e,r=!1,a){const n=f.card(t);e=f.time(e);const l=n.state===i.New?0:g(e,n.due,"days"),o={rating:s.Manual,state:n.state,due:n.due,stability:n.stability,difficulty:n.difficulty,elapsed_days:0,last_elapsed_days:n.elapsed_days,scheduled_days:l,learning_steps:n.learning_steps,review:e};return St({card:xt(bt({},n),{due:e,stability:0,difficulty:0,elapsed_days:0,scheduled_days:0,reps:r?0:n.reps,lapses:r?0:n.lapses,learning_steps:0,state:i.New,last_review:n.last_review}),log:o},a)}reschedule(t,e=[],r={}){const{recordLogHandler:i,reviewsOrderBy:a,skipManual:n=!0,now:l=new Date,update_memory_state:o=!1}=r;a&&"function"==typeof a&&e.sort(a),n&&(e=e.filter(t=>t.rating!==s.Manual));const u=new _t(this),d=u.reschedule(r.first_card||J(),e),h=d.length,c=f.card(t),_=u.calculateManualRecord(c,l,h?d[h-1]:void 0,o);return{collections:"function"==typeof i?d.map(i):d,reschedule_item:_?St(_,i):null}}}t.AbstractScheduler=I,t.BasicLearningStepsStrategy=D,t.CLAMP_PARAMETERS=W,t.ConvertStepUnitToMinutes=N,t.DefaultInitSeedStrategy=O,t.FSRS=Rt,t.FSRS5_DEFAULT_DECAY=.5,t.FSRS6_DEFAULT_DECAY=q,t.FSRSAlgorithm=et,t.FSRSVersion="v5.4.2 using FSRS-6.0",t.GenSeedStrategyWithCardId=function(t){return function(){var e;const r=null!=(e=Reflect.get(this.current,t))?e:0,i=this.current.reps;return String(r+i||0)}},t.Grades=x,t.INIT_S_MAX=k,t.Rating=s,t.S_MAX=36500,t.S_MIN=U,t.State=i,t.StrategyMode=L,t.TypeConvert=f,t.W17_W18_Ceiling=2,t.checkParameters=t=>{if(void 0!==t.find(t=>!Number.isFinite(t)))throw new r(`Non-finite or NaN value in parameters ${t}`);if(![17,19,21].includes(t.length))throw new r(`Invalid parameter length: ${t.length}. Must be 17, 19 or 21 for FSRSv4, 5 and 6 respectively.`);return t},t.clamp=R,t.clipParameters=B,t.computeDecayFactor=Z,t.createEmptyCard=J,t.dateDiffInDays=A,t.date_diff=g,t.date_scheduler=p,t.default_enable_fuzz=C,t.default_enable_short_term=H,t.default_learning_steps=G,t.default_maximum_interval=36500,t.default_relearning_steps=z,t.default_request_retention=.9,t.default_w=Y,t.fixDate=function(t){return f.time(t)},t.fixRating=function(t){return f.rating(t)},t.fixState=function(t){return f.state(t)},t.forgetting_curve=tt,t.formatDate=y,t.fsrs=t=>new Rt(t||{}),t.generatorParameters=X,t.get_fuzz_range=S,t.migrateParameters=V,t.roundTo=E,t.show_diff_message=b});
+</script>
+<script>
+"use strict";
+/* ============================================================
+   Petit à petit — Frans woorden oefenen met gespreide herhaling
+   Kaartjes: per hoofdstuk één deck. Nieuwe hoofdstukken onderaan
+   DECKS toevoegen; bestaande id's nooit wijzigen (voortgang hangt eraan).
+   ============================================================ */
+const DECKS = [
+  { id: 'c1', title: 'Hoofdstuk 1', color:'#FF7A1A', cards: [
+    // volgorde = volgorde waarin nieuwe kaartjes verschijnen
+    { id:'c1-27', nl:'een moeder', fr:'une mère' },
+    { id:'c1-17', nl:'de grootouders', fr:'les grands-parents',
+      near:[{a:'les grand-parents', note:'Let op: grand<b>s</b>-parents krijgt hier een s.'}] },
+    { id:'c1-18', nl:'een grootvader', fr:'un grand-père' },
+    { id:'c1-26', nl:'een grootmoeder', fr:'une grand-mère' },
+    { id:'c1-10', nl:'een reis', fr:'un voyage' },
+    { id:'c1-20', nl:'een koffer', fr:'une valise' },
+    { id:'c1-24', nl:'een strand', fr:'une plage' },
+    { id:'c1-02', nl:'zwemmen', fr:'nager' },
+    { id:'c1-15', nl:'wandelen', fr:'se promener',
+      near:[{a:'promener', note:'Vergeet <b>se</b> niet: se promener.'}] },
+    { id:'c1-08', nl:'de natuur', fr:'la nature' },
+    { id:'c1-19', nl:'de Ardennen', fr:'les Ardennes' },
+    { id:'c1-11', nl:'terugkeren, thuiskomen', fr:'rentrer' },
+    { id:'c1-22', nl:'een terugkeer, thuiskomst', fr:'un retour' },
+    { id:'c1-07', nl:'verzorgen', fr:'soigner' },
+    { id:'c1-31', nl:'spreken', fr:'parler' },
+    { id:'c1-16', nl:'tegenover', fr:'en face de',
+      near:[{a:'en face', note:'Bijna: het is en face <b>de</b>.'}] },
+    { id:'c1-06', nl:'een einde', fr:'une fin' },
+    { id:'c1-28', nl:'(be)eindigen, aflopen', fr:'finir' },
+    { id:'c1-12', nl:'lijken, schijnen', fr:'sembler' },
+    { id:'c1-23', nl:'bedroefd, droevig', fr:'triste' },
+    { id:'c1-32', nl:'ongelukkig', fr:'malheureux, malheureuse', accept:['malheureuse, malheureux'] },
+    { id:'c1-03', nl:'Hij pakt zijn koffer.', fr:'Il fait sa valise.' },
+    { id:'c1-09', nl:'Een goede thuiskomst!', fr:'Bon retour!' },
+    { id:'c1-05', nl:'Het weer is super.', fr:'Il fait un temps super.' },
+    { id:'c1-30', nl:'Ik wandel ontzettend graag.', fr:"J'adore me promener.",
+      near:[{a:"J'aime beaucoup me promener", note:"Goed Frans! Op je kaartje staat: J'adore me promener."}] },
+    { id:'c1-01', nl:'Wie verzorgt er je dieren?', fr:'Qui soigne tes animaux?' },
+    { id:'c1-14', nl:'Ze wonen tegenover mij.', fr:'Ils habitent en face de chez moi.', accept:['Elles habitent en face de chez moi.'] },
+    { id:'c1-04', nl:'Je lijkt bedroefd.', fr:'Tu sembles triste.' },
+    { id:'c1-21', nl:'Ze is ongelukkig.', fr:'Elle est malheureuse.' },
+    { id:'c1-13', nl:'Aan alles komt een eind.', fr:'Tout a une fin.' },
+    { id:'c1-29', nl:'Het is afgelopen.', fr:"C'est fini." },
+    { id:'c1-25', nl:'Binnen een week.', fr:'Dans une semaine.' },
+  ]},
+  { id: 'c2', title: 'Hoofdstuk 2', color:'#E48BC9', cards: [
+    { id:'c2-14', nl:'een leerling', fr:'un élève' },
+    { id:'c2-15', nl:'een leerlinge', fr:'une élève' },
+    { id:'c2-16', nl:'een directeur', fr:'un directeur' },
+    { id:'c2-24', nl:'een (school)bank', fr:'un banc' },
+    { id:'c2-27', nl:'een schoolbord', fr:'un tableau' },
+    { id:'c2-10', nl:'een voornaam', fr:'un prénom' },
+    { id:'c2-12', nl:'een jaar', fr:'une année' },
+    { id:'c2-06', nl:'een hoek', fr:'un coin' },
+    { id:'c2-01', nl:'zeggen', fr:'dire' },
+    { id:'c2-25', nl:'zien', fr:'voir' },
+    { id:'c2-08', nl:'werken', fr:'travailler' },
+    { id:'c2-13', nl:'brengen', fr:'conduire' },
+    { id:'c2-28', nl:'(aan)leren', fr:'apprendre' },
+    { id:'c2-02', nl:'elk(e), ieder(e)', fr:'chaque' },
+    { id:'c2-19', nl:'zelfde', fr:'même' },
+    { id:'c2-23', nl:'tussen', fr:'entre' },
+    { id:'c2-03', nl:'Belgisch', fr:'belge' },
+    { id:'c2-29', nl:'het Nederlands', fr:'le néerlandais' },
+    { id:'c2-17', nl:'een boom', fr:'un arbre' },
+    { id:'c2-18', nl:'een kilometer', fr:'un kilomètre' },
+    { id:'c2-07', nl:'Ik ben Belgisch.', fr:'Je suis Belge.' },
+    { id:'c2-21', nl:'Waar kom je vandaan?', fr:"Tu es d'où ?" },
+    { id:'c2-09', nl:'Ik zit in het derde leerjaar.', fr:'Je suis en troisième.' },
+    { id:'c2-04', nl:'Ik zit in het vierde leerjaar.', fr:'Je suis en quatrième.' },
+    { id:'c2-05', nl:'Ik zit in het vijfde leerjaar.', fr:'Je suis en cinquième.' },
+    { id:'c2-30', nl:'In welke klas zit je?', fr:'Tu es dans quelle classe ?' },
+    { id:'c2-11', nl:'Ze brengt me naar school.', fr:"Elle me conduit à l'école." },
+    { id:'c2-20', nl:'Hij wil Frans leren.', fr:'Il veut apprendre le français.' },
+    { id:'c2-22', nl:'We gaan hem goedendag zeggen.', fr:'On va lui dire bonjour.',
+      near:[{a:'Nous allons lui dire bonjour', note:'Goed Frans! Op je kaartje staat: On va lui dire bonjour.'}] },
+    { id:'c2-26', nl:'Er zijn vijfentwintig leerlingen.', fr:'Il y a vingt-cinq élèves.',
+      near:[{a:'Il y a 25 élèves', note:'Schrijf het getal voluit: vingt-cinq.'}] },
+  ]},
+  { id: 'c3', title: 'Hoofdstuk 3', color:'#3FA9F5', cards: [
+    { id:'c3-02', nl:'een potlood', fr:'un crayon' },
+    { id:'c3-04', nl:'een balpen', fr:'un stylo' },
+    { id:'c3-11', nl:'een gom', fr:'une gomme' },
+    { id:'c3-15', nl:'een blad (papier)', fr:'une feuille' },
+    { id:'c3-19', nl:'een bladzijde', fr:'une page' },
+    { id:'c3-12', nl:'een tekst', fr:'un texte' },
+    { id:'c3-01', nl:'een zin', fr:'une phrase' },
+    { id:'c3-13', nl:'een woord', fr:'un mot' },
+    { id:'c3-16', nl:'een fout', fr:'une faute' },
+    { id:'c3-10', nl:'een les', fr:'une leçon' },
+    { id:'c3-03', nl:'geven', fr:'donner' },
+    { id:'c3-20', nl:'kopiëren, overschrijven', fr:'copier' },
+    { id:'c3-21', nl:'verbeteren', fr:'corriger' },
+    { id:'c3-05', nl:'altijd', fr:'toujours' },
+    { id:'c3-24', nl:'de hulp', fr:"l'aide" },
+    { id:'c3-06', nl:'Het is een fout.', fr:"C'est une faute." },
+    { id:'c3-14', nl:'Geef mij je pen.', fr:'Donne-moi ton stylo.' },
+    { id:'c3-09', nl:'Toon het even.', fr:'Montre un peu.' },
+    { id:'c3-22', nl:'Ik begrijp het niet.', fr:'Je ne comprends pas.' },
+    { id:'c3-18', nl:'Hij heeft gelijk.', fr:'Il a raison.' },
+    { id:'c3-17', nl:'Je moet opletten.', fr:'Il faut faire attention.' },
+    { id:'c3-07', nl:'Wil je het woord verbeteren?', fr:'Tu veux bien corriger le mot ?',
+      near:[{a:'Tu veux corriger le mot', note:'Bijna: het is Tu veux <b>bien</b> corriger le mot ?'}] },
+    { id:'c3-23', nl:'Bedankt voor je hulp.', fr:'Merci de ton aide.' },
+    { id:'c3-08', nl:'Het is middernacht.', fr:'Il est minuit.' },
+  ]},
+  { id: 'c4', title: 'Hoofdstuk 4', color:'#E3B94F', cards: [
+    { id:'c4-09', nl:'een boerderij', fr:'une ferme' },
+    { id:'c4-27', nl:'een kinderboerderij', fr:'une ferme pour enfants' },
+    { id:'c4-22', nl:'een koe', fr:'une vache' },
+    { id:'c4-06', nl:'een schaap', fr:'un mouton' },
+    { id:'c4-10', nl:'een haan', fr:'un coq' },
+    { id:'c4-28', nl:'een kip', fr:'une poule' },
+    { id:'c4-04', nl:'melken', fr:'traire' },
+    { id:'c4-05', nl:'een bos, woud', fr:'une forêt' },
+    { id:'c4-02', nl:'een plant', fr:'une plante' },
+    { id:'c4-03', nl:'een bloem', fr:'une fleur' },
+    { id:'c4-01', nl:'een blad', fr:'une feuille' },
+    { id:'c4-29', nl:'de aarde, grond', fr:'la terre' },
+    { id:'c4-18', nl:'de seizoenen', fr:'les saisons' },
+    { id:'c4-23', nl:'de lente', fr:'le printemps' },
+    { id:'c4-24', nl:'de zomer', fr:"l'été" },
+    { id:'c4-07', nl:'de herfst', fr:"l'automne" },
+    { id:'c4-19', nl:'de winter', fr:"l'hiver" },
+    { id:'c4-11', nl:'een (na)middag', fr:'un après-midi' },
+    { id:'c4-26', nl:'de nacht', fr:'la nuit' },
+    { id:'c4-12', nl:'duren', fr:'durer' },
+    { id:'c4-14', nl:'lang, lange tijd', fr:'longtemps' },
+    { id:'c4-13', nl:'een bosklas', fr:'une classe verte' },
+    { id:'c4-25', nl:'een les', fr:'un cours' },
+    { id:'c4-17', nl:'zelfs', fr:'même' },
+    { id:'c4-16', nl:'jawel / als, indien', fr:'si' },
+    { id:'c4-08', nl:'We slapen in een boerderij.', fr:'On dort dans une ferme.',
+      near:[{a:'Nous dormons dans une ferme', note:'Goed Frans! Op je kaartje staat: On dort dans une ferme.'}] },
+    { id:'c4-30', nl:'We leren de koeien melken.', fr:'On apprend à traire les vaches.',
+      near:[{a:'Nous apprenons à traire les vaches', note:'Goed Frans! Op je kaartje staat: On apprend à traire les vaches.'}] },
+    { id:'c4-20', nl:'We leren het leven van de natuur begrijpen.', fr:'On apprend à comprendre la vie de la nature.',
+      near:[{a:'Nous apprenons à comprendre la vie de la nature', note:'Goed Frans! Op je kaartje staat: On apprend à comprendre la vie de la nature.'}] },
+    { id:'c4-15', nl:'Het is niet echt vakantie.', fr:'Ce ne sont pas vraiment des vacances.' },
+    { id:'c4-31', nl:'Blijf je er lang?', fr:'Tu restes longtemps là-bas ?' },
+    { id:'c4-21', nl:'Ik kan niet wachten om te vertrekken.', fr:'Je suis heureux de partir !', accept:['Je suis heureuse de partir !'] },
+  ]},
+];
+
+const STORE_KEY = 'petitapetit.v1';
+const LEARN_AHEAD = 20 * 60 * 1000;   // leerkaartjes tot 20 min vooruit tonen
+const DAY_START_HOUR = 3;             // een nieuwe dag begint om 3 uur 's nachts
+const ACCENTS = ['é','è','ê','à','â','ç','ô','î',"'"];
+const PRAISE = ['Super !','Bravo !','Très bien !','Parfait !','Génial !','Exact !','Bien joué !'];
+
+const F = window.FSRS;
+const scheduler = F.fsrs(F.generatorParameters({ enable_fuzz: true, maximum_interval: 365 }));
+
+/* ---------- helpers ---------- */
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const pick = a => a[Math.floor(Math.random()*a.length)];
+function shuffle(a){ for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];} return a; }
+const now = () => Date.now();
+function dayKey(t){ const d=new Date(t - DAY_START_HOUR*3600e3); return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); }
+function prevDay(key){ const [y,m,d]=key.split('-').map(Number); const t=new Date(y,m-1,d,12); t.setDate(t.getDate()-1); return dayKey(t.getTime()+DAY_START_HOUR*3600e3); }
+
+const CARDS = new Map(); DECKS.forEach(d => d.cards.forEach(c => { c.deck = d.id; c.kind = /[.!?]$/.test(c.nl) ? 's' : 'w'; CARDS.set(c.id, c); }));
+const activeCards = () => DECKS.filter(d => S.settings.decks[d.id] !== false).flatMap(d => d.cards);
+
+/* ---------- opslag ---------- */
+function defaultState(){ return { v:1, name:'Louise', settings:{ newPerDay:10, autoSpeak:true, decks:{} }, items:{}, daily:{ day:'', newDone:0 }, stats:{ stars:0, streak:0, best:0, lastDone:'', answers:0 }, lastExport:0, created:now() }; }
+function migrate(s){ const d=defaultState(); if(!s||typeof s!=='object') return d; return { ...d, ...s, settings:{...d.settings, ...(s.settings||{}), decks:{...((s.settings||{}).decks||{})}}, daily:{...d.daily, ...(s.daily||{})}, stats:{...d.stats, ...(s.stats||{})}, items:s.items||{} }; }
+function load(){ try{ const raw=localStorage.getItem(STORE_KEY); return raw ? migrate(JSON.parse(raw)) : defaultState(); }catch(e){ return defaultState(); } }
+let saveWarned=false;
+function save(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify(S)); }catch(e){ if(!saveWarned){ saveWarned=true; toast('Let op: voortgang kan op dit toestel niet bewaard worden.'); } } }
+let S = load();
+function askPersist(){ try{ if(navigator.storage && navigator.storage.persist) navigator.storage.persist().catch(()=>{}); }catch(e){} }
+
+/* ---------- uitspraak ---------- */
+let frVoice = null;
+function pickVoice(){ try{ const vs=speechSynthesis.getVoices(); frVoice = vs.find(v=>v.lang==='fr-FR') || vs.find(v=>(v.lang||'').toLowerCase().startsWith('fr')) || null; }catch(e){} }
+const canSpeak = 'speechSynthesis' in window && 'SpeechSynthesisUtterance' in window;
+if (canSpeak){ pickVoice(); try{ speechSynthesis.onvoiceschanged = pickVoice; }catch(e){} }
+let noVoiceWarned=false;
+function noFrenchVoice(){ try{ return !frVoice && speechSynthesis.getVoices().length>0; }catch(e){ return false; } }
+function speak(text){
+  if(!canSpeak) return;
+  if(!frVoice) pickVoice();
+  // Geen Franse stem op dit toestel: liever stil dan met een Engelse stem
+  if(noFrenchVoice()){ if(!noVoiceWarned){ noVoiceWarned=true; toast('Geen Franse stem gevonden op dit toestel. Zie Instellingen.'); } return; }
+  try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text.replace(/[()]/g,'')); u.lang='fr-FR'; if(frVoice) u.voice=frVoice; u.rate=0.85; speechSynthesis.speak(u); }catch(e){}
+}
+const ICON_SAY = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
+const sayBtn = (text, cls='') => canSpeak ? `<button type="button" class="say ${cls}" data-say="${esc(text)}" aria-label="Luister">${ICON_SAY}</button>` : '';
+document.addEventListener('click', e => { const b=e.target.closest('[data-say]'); if(b) speak(b.dataset.say); });
+
+/* ---------- vogeltje ---------- */
+function bird(mood='happy'){
+  const eye = mood==='cheer' ? '<path d="M70 52q5-6 10 0" stroke="#23233A" stroke-width="4" fill="none" stroke-linecap="round"/>' : '<circle cx="75" cy="53" r="5.5" fill="#23233A"/><circle cx="77" cy="51" r="1.8" fill="#fff"/>';
+  return `<svg class="bird" viewBox="0 0 120 120" aria-hidden="true">
+    <ellipse cx="60" cy="108" rx="30" ry="5" fill="rgba(0,0,0,.08)"/>
+    <path d="M48 98v8M42 106h12M68 98v8M62 106h12" stroke="#D9560B" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M52 22c2-9 12-12 14-4c4-7 13-3 9 5" fill="#FF7A1A"/>
+    <circle cx="60" cy="62" r="38" fill="#FF7A1A"/>
+    <ellipse cx="64" cy="74" rx="24" ry="20" fill="#FFF7EE"/>
+    <ellipse cx="38" cy="70" rx="12" ry="19" transform="rotate(25 38 70)" fill="#D9560B"/>
+    
+    ${eye}
+    <path d="M94 58l18 6l-18 7z" fill="#F2B705"/>
+    <circle cx="84" cy="67" r="5" fill="#FFB38A" opacity=".7"/>
+  </svg>`;
+}
+
+/* ---------- toast & confetti ---------- */
+let toastTimer;
+function toast(msg){ let t=$('.toast'); if(!t){ t=document.createElement('div'); t.className='toast'; t.setAttribute('role','status'); document.body.appendChild(t); } t.textContent=msg; t.hidden=false; clearTimeout(toastTimer); toastTimer=setTimeout(()=>{t.hidden=true;},3200); }
+function confetti(){ if(matchMedia('(prefers-reduced-motion: reduce)').matches) return; const box=document.createElement('div'); box.className='confetti'; const cols=['#FF7A1A','#F2B705','#178A57','#4C8DF6','#E85D9A']; for(let i=0;i<46;i++){ const p=document.createElement('i'); p.style.left=Math.random()*100+'%'; p.style.background=pick(cols); p.style.animationDuration=(1.6+Math.random()*1.6)+'s'; p.style.animationDelay=(Math.random()*.5)+'s'; p.style.transform=`rotate(${Math.random()*360}deg)`; box.appendChild(p);} document.body.appendChild(box); setTimeout(()=>box.remove(),4000); }
+
+/* ---------- planning ---------- */
+const itemKey = (cid, dir) => cid + ':' + dir;
+const parseKey = k => { const i=k.lastIndexOf(':'); return { cid:k.slice(0,i), dir:k.slice(i+1) }; };
+function getItem(k){ return S.items[k]; }
+function ensureItem(k){ if(!S.items[k]) S.items[k] = { card: JSON.parse(JSON.stringify(F.createEmptyCard(new Date()))), ok:0, bad:0 }; return S.items[k]; }
+const isNew = k => { const it=getItem(k); return !it || it.card.state === 0; };
+const dueTime = k => Date.parse(getItem(k).card.due);
+function isDue(k, t){ const it=getItem(k); if(!it || it.card.state===0) return false; const st=it.card.state; if(st===1||st===3) return dueTime(k) <= t + LEARN_AHEAD || dayKey(dueTime(k)) < dayKey(t); return dayKey(dueTime(k)) <= dayKey(t); }
+function writeUnlocked(cid, t){ const r=getItem(itemKey(cid,'r')); return !!(r && r.firstOk && Date.parse(r.firstOk) < t); }
+function resetDaily(t){ const d=dayKey(t); if(S.daily.day!==d){ S.daily={ day:d, newDone:0 }; } }
+function status(k){ const it=getItem(k); if(!it || it.card.state===0) return 'new'; if(it.card.state===2 && it.card.scheduled_days>=7) return 'known'; return 'learn'; }
+
+function plan(t){
+  resetDaily(t);
+  const reviews=[], newR=[], newW=[];
+  for (const c of activeCards()){
+    for (const dir of ['r','w']){
+      const k=itemKey(c.id,dir);
+      if (!isNew(k)) { if (isDue(k,t)) reviews.push(k); }
+      else if (dir==='r') newR.push(k);
+      else if (writeUnlocked(c.id,t)) newW.push(k);
+    }
+  }
+  const limit=Math.max(0, S.settings.newPerDay - S.daily.newDone);
+  const news=[]; let i=0;
+  while (news.length<limit && (i<newW.length || i<newR.length)){ if(i<newW.length) news.push(newW[i]); if(news.length<limit && i<newR.length) news.push(newR[i]); i++; }
+  return { reviews, news };
+}
+function buildQueue(t){
+  const { reviews, news } = plan(t);
+  shuffle(reviews);
+  const out=[]; let ri=0;
+  news.forEach((n,ni)=>{ const target=Math.round((ni+1)*reviews.length/(news.length+1)); while(ri<target) out.push(reviews[ri++]); out.push(n); });
+  while(ri<reviews.length) out.push(reviews[ri++]);
+  return out;
+}
+
+/* ---------- antwoorden nakijken ---------- */
+function sk(s){ return String(s).normalize('NFC').toLowerCase().replace(/[’‘`´ʼ]/g,"'").replace(/œ/g,'oe').replace(/æ/g,'ae').replace(/[.,;:!?¡¿«»"“”()\/…]/g,' ').replace(/\s*'\s*/g,"'").replace(/\s*-\s*/g,'-').replace(/\s+/g,' ').trim(); }
+const noAcc = s => s.normalize('NFD').replace(/[̀-ͯ]/g,'');
+const loose = s => noAcc(s).replace(/[^a-z]/g,'');
+function splitArt(k){ const m=k.match(/^(une|un|les|le|la)\s+|^(l')/); if(!m) return [null,k]; return [m[1]||m[2], k.slice(m[0].length)]; }
+const GENDER = { un:'(mannelijk)', le:'(mannelijk)', une:'(vrouwelijk)', la:'(vrouwelijk)', les:'(meervoud)', "l'":'' };
+function evaluate(card, raw){
+  const inp=sk(raw);
+  if(!inp) return { g:'wrong', idk:true };
+  const targets=[card.fr, ...(card.accept||[])];
+  for (const t of targets) if (sk(t)===inp) return { g:'ok' };
+  for (const t of targets){ const ti=sk(t); if (loose(ti)===loose(inp)){
+    if (noAcc(ti)===noAcc(inp)) return { g:'near', note:'Let op de accenten.' };
+    const accDiff = ti.replace(/[-' ]/g,'') !== inp.replace(/[-' ]/g,'');
+    return { g:'near', note: accDiff ? 'Let op de accenten en het streepje of de apostrof.' : 'Let op het streepje of de apostrof.' };
+  } }
+  for (const n of card.near||[]) if (loose(sk(n.a))===loose(inp)) return { g:'near', note:n.note };
+  const nlk=loose(sk(card.nl));
+  for (const c of CARDS.values()) if (c!==card && loose(sk(c.nl))===nlk && loose(sk(c.fr))===loose(inp)) return sk(c.fr)===inp ? { g:'ok', note:`Ook juist! Op dit kaartje staat: <b>${esc(card.fr)}</b>.` } : { g:'near', note:`Ook goed, maar let op de schrijfwijze: <b>${esc(c.fr)}</b>. Op dit kaartje staat: <b>${esc(card.fr)}</b>.` };
+  if (card.fr.includes(',')){ const parts=card.fr.split(',').map(p=>loose(sk(p))); if (parts.includes(loose(inp))) return { g:'near', note:'Ken je ook de andere vorm?' }; }
+  const [ta, trest]=splitArt(sk(card.fr));
+  if (ta){ const [ia, irest]=splitArt(inp);
+    if (loose(irest)===loose(trest)){
+      if (!ia) return { g:'wrong', note:'Vergeet het lidwoord niet!' };
+      if (ia!==ta) return { g:'wrong', note:`Let op het lidwoord: <b>${esc(ta)}</b> ${GENDER[ta]||''}` };
+    }
+  }
+  for (const c of CARDS.values()) if (c!==card && loose(sk(c.fr))===loose(inp)) return { g:'wrong', note:`Dat is het Frans voor “${esc(c.nl)}”.` };
+  return { g:'wrong' };
+}
+function retypeOk(card, raw){ const k=loose(sk(raw)); return [card.fr, ...(card.accept||[])].some(t=>loose(sk(t))===k); }
+function diffMark(input, target){
+  const a=[...input.toLowerCase()], b=[...target]; const bl=b.map(c=>c.toLowerCase());
+  const n=a.length, m=b.length; const dp=Array.from({length:n+1},()=>new Array(m+1).fill(0));
+  for(let i=n-1;i>=0;i--) for(let j=m-1;j>=0;j--) dp[i][j] = a[i]===bl[j] ? dp[i+1][j+1]+1 : Math.max(dp[i+1][j], dp[i][j+1]);
+  const keep=new Array(m).fill(false); let i=0,j=0;
+  while(i<n&&j<m){ if(a[i]===bl[j]){keep[j]=true;i++;j++;} else if(dp[i+1][j]>=dp[i][j+1]) i++; else j++; }
+  const kept=keep.filter(Boolean).length; if (kept < 0.6*b.filter(c=>c!==' ').length) return esc(target);
+  return b.map((c,k)=> keep[k]||c===' ' ? esc(c) : `<mark>${esc(c)}</mark>`).join('');
+}
+
+/* ---------- sessie ---------- */
+let SES=null;
+function startSession(mode){
+  askPersist();
+  const t=now();
+  if (mode==='practice'){
+    const pool=[];
+    for (const c of activeCards()) for (const dir of ['r','w']){ const k=itemKey(c.id,dir); if(!isNew(k)) pool.push(k); }
+    if (!pool.length){ toast('Leer eerst een paar kaartjes in je dagelijkse ronde.'); return; }
+    SES={ mode, queue:shuffle(pool).slice(0,12), learning:new Set(), retried:new Set(), last:null, lastCid:null, start:t, answered:0, ok:0, stars:0, introduced:new Set() };
+  } else {
+    SES={ mode:'daily', queue:buildQueue(t), learning:new Set(), retried:new Set(), last:null, lastCid:null, start:t, answered:0, ok:0, stars:0, introduced:new Set() };
+    if (!SES.queue.length){ SES=null; renderHome(); return; }
+  }
+  nextCard();
+}
+function takeFromQueue(){
+  let idx=0;
+  if (SES.queue.length>1 && parseKey(SES.queue[0]).cid===SES.lastCid){ const alt=SES.queue.findIndex(k=>parseKey(k).cid!==SES.lastCid); if(alt>0) idx=alt; }
+  return SES.queue.splice(idx,1)[0];
+}
+function nextCard(){
+  const t=now(); let k=null;
+  if (SES.mode==='daily'){
+    const byDue=(a,b)=>dueTime(a)-dueTime(b);
+    const dueL=[...SES.learning].filter(x=>dueTime(x)<=t && x!==SES.last).sort(byDue);
+    if (dueL.length) k=dueL[0];
+    else if (SES.queue.length) k=takeFromQueue();
+    else { const ahead=[...SES.learning].filter(x=>dueTime(x)<=t+LEARN_AHEAD).sort(byDue); if(ahead.length) k = (ahead.length>1 && ahead[0]===SES.last) ? ahead[1] : ahead[0]; }
+  } else if (SES.queue.length) k=takeFromQueue();
+  if (!k) return finishSession(true);
+  const { cid, dir } = parseKey(k);
+  const card=CARDS.get(cid);
+  if (!card){ delete S.items[k]; SES.learning.delete(k); return nextCard(); }
+  SES.current=k;
+  if (SES.mode==='daily' && dir==='r' && isNew(k) && !SES.introduced.has(k)) return renderIntro(k, card);
+  if (dir==='r') renderChoice(k, card); else renderTyping(k, card);
+}
+function progressPct(){ const total=SES.answered+SES.queue.length+SES.learning.size+1; return Math.round(100*SES.answered/total); }
+
+function record(k, grade){ // grade: 'ok' | 'near' | 'wrong'
+  const t=now(); const { cid, dir } = parseKey(k);
+  const stars = grade==='ok' ? 2 : grade==='near' ? 1 : 0;
+  SES.answered++; if(grade!=='wrong') SES.ok++; SES.stars+=stars;
+  S.stats.stars+=stars; S.stats.answers++;
+  if (SES.mode==='daily'){
+    const wasNew=isNew(k); const it=ensureItem(k);
+    const rating = grade==='ok' ? F.Rating.Good : grade==='near' ? F.Rating.Hard : F.Rating.Again;
+    const res=scheduler.next(it.card, new Date(t), rating);
+    it.card=JSON.parse(JSON.stringify(res.card));
+    if (wasNew){ resetDaily(t); S.daily.newDone++; }
+    if (grade==='wrong') it.bad++; else { it.ok++; if(!it.firstOk) it.firstOk=new Date(t).toISOString(); }
+    if (it.card.state===1 || it.card.state===3) SES.learning.add(k); else SES.learning.delete(k);
+  } else if (grade==='wrong' && !SES.retried.has(k)){ SES.retried.add(k); SES.queue.push(k); }
+  SES.last=k; SES.lastCid=cid;
+  save();
+}
+function finishSession(complete){
+  const s=SES; SES=null;
+  if (s.mode==='daily' && complete){
+    const today=dayKey(now());
+    if (S.stats.lastDone!==today){ S.stats.streak = (S.stats.lastDone===prevDay(today)) ? S.stats.streak+1 : 1; S.stats.lastDone=today; S.stats.best=Math.max(S.stats.best,S.stats.streak); }
+    save();
+  }
+  if (!s.answered) return renderHome();
+  renderEnd(s, complete);
+}
+function quitSession(){ if(!SES) return renderHome(); const s=SES; if(s.answered) finishSession(false); else { SES=null; renderHome(); } }
+
+/* ---------- schermen ---------- */
+const ICON_GEAR='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg>';
+const ICON_X='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round"><path d="M6 6l12 12M18 6 6 18"/></svg>';
+const ICON_BACK='<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M15 5l-7 7 7 7"/></svg>';
+const app=()=>{ document.querySelectorAll('.confetti').forEach(x=>x.remove()); return $('#app'); };
+function streakNow(){ const today=dayKey(now()); return (S.stats.lastDone===today || S.stats.lastDone===prevDay(today)) ? S.stats.streak : 0; }
+
+function renderHome(){
+  const t=now(); const { reviews, news } = plan(t);
+  const todayDone = S.stats.lastDone===dayKey(t);
+  const total = reviews.length+news.length;
+  const tomorrow = new Date(t+86400e3);
+  const tomorrowCount = (()=>{ let n=0; for(const c of activeCards()) for(const dir of ['r','w']){ const k=itemKey(c.id,dir); if(!isNew(k) && dayKey(dueTime(k))<=dayKey(tomorrow.getTime())) n++; } return n; })();
+  const streak=streakNow();
+  const deckRows = DECKS.filter(d=>S.settings.decks[d.id]!==false).map(d=>{
+    let nw=0, ln=0, kn=0; d.cards.forEach(c=>['r','w'].forEach(dir=>{ const s=status(itemKey(c.id,dir)); if(s==='new') nw++; else if(s==='learn') ln++; else kn++; }));
+    const tot=nw+ln+kn;
+    return `<div class="drow"><span class="ddot" style="background:${d.color||'var(--orange)'}"></span><span>${esc(d.title)}</span><span class="dcount">${kn}/${tot} gekend</span></div>
+      <div class="seg slim" role="img" aria-label="${esc(d.title)}: ${kn} gekend, ${ln} aan het leren, ${nw} nieuw"><i style="width:${100*kn/tot}%;background:var(--green)"></i><i style="width:${100*ln/tot}%;background:var(--orange)"></i></div>`;
+  }).join('');
+  const decks = deckRows ? `<div class="panel"><h2>Hoofdstukken</h2>${deckRows}<div class="legend" style="margin-top:10px"><span><i class="dot d-known"></i>gekend</span><span><i class="dot d-learn"></i>aan het leren</span><span><i class="dot d-new"></i>nieuw</span></div></div>` : '';
+  const seenAny = Object.values(S.items).some(it=>it.card.state!==0);
+  const backupOld = S.stats.answers>80 && (now()-(S.lastExport||0)) > 30*86400e3;
+  app().innerHTML = `
+    <div class="topbar"><span class="wordmark">Petit à petit</span><button class="icon-btn" id="b-set" aria-label="Instellingen">${ICON_GEAR}</button></div>
+    <div class="hero">${bird(total? 'happy':'cheer')}<div><h1>Salut ${esc(S.name||'')} !</h1><p>${total ? 'Klaar voor je Frans?' : (todayDone ? 'Alles gedaan voor vandaag. Bravo !' : 'Niets te doen vandaag.')}</p></div></div>
+    <div class="chips"><span class="chip">🔥 ${streak} ${streak===1?'dag':'dagen'} op rij</span><span class="chip">⭐ ${S.stats.stars}</span></div>
+    <div class="panel"><h2>Vandaag</h2>
+      ${ total ? `<div class="today-counts"><div><b>${reviews.length}</b><span>herhalen</span></div><div><b>${news.length}</b><span>nieuw</span></div></div>
+        <button class="btn primary block" id="b-start">Start</button>`
+      : `<div class="done-msg">${todayDone ? 'Klaar ! 🎉' : 'Alles bijgewerkt'}</div><div class="muted small">${tomorrowCount ? `Morgen staan er ${tomorrowCount} kaartjes klaar.` : 'Kom morgen terug voor nieuwe kaartjes.'}</div>` }
+    </div>
+    ${decks}
+    <div class="grid2">
+      <button class="tile" id="b-practice" ${seenAny?'':'aria-disabled="true"'}><b>Vrij oefenen</b><span>Kaartjes die je al zag</span></button>
+      <button class="tile" id="b-words"><b>Mijn woorden</b><span>Alle kaartjes bekijken</span></button>
+    </div>
+    ${backupOld ? `<div class="note-banner">Voor ouders: maak eens een back-up van de voortgang. <button id="b-backup">Nu doen</button></div>` : ''}`;
+  $('#b-set').onclick=renderSettings;
+  const st=$('#b-start'); if(st) st.onclick=()=>startSession('daily');
+  $('#b-practice').onclick=()=>startSession('practice');
+  $('#b-words').onclick=renderWords;
+  const bb=$('#b-backup'); if(bb) bb.onclick=exportData;
+}
+
+function sessionBar(){
+  return `<div class="sbar"><button class="icon-btn" id="b-quit" aria-label="Stoppen">${ICON_X}</button>
+    <div class="progress" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${progressPct()}"><i style="width:${progressPct()}%"></i></div>
+    <span class="sstars">⭐ ${SES.stars}</span></div>
+    ${SES.mode==='practice' ? '<div class="mode-tag">Vrij oefenen</div>' : ''}`;
+}
+function bindQuit(){ $('#b-quit').onclick=quitSession; }
+
+function renderIntro(k, card){
+  app().innerHTML = `${sessionBar()}
+    <div class="qcard pop">
+      <div class="qlabel"><span class="intro-badge">${card.kind==='s'?'NIEUWE ZIN':'NIEUW WOORD'}</span>${sayBtn(card.fr)}</div>
+      <div class="qtext fr">${esc(card.fr)}</div>
+      <div class="qsub">${esc(card.nl)}</div>
+      <div class="divider"></div>
+      <div class="muted small" style="margin-bottom:12px">Lees het, luister, en zeg het eens hardop.</div>
+      <button class="btn primary block" id="b-next">Begrepen !</button>
+    </div>`;
+  bindQuit();
+  if (S.settings.autoSpeak) speak(card.fr);
+  const go=()=>{ SES.introduced.add(k); SES.queue.splice(Math.min(2, SES.queue.length), 0, k); SES.lastCid=card.id; SES.last=k; nextCard(); };
+  $('#b-next').onclick=go; $('#b-next').focus({preventScroll:true});
+}
+
+function renderChoice(k, card){
+  const okD=c=>c!==card && c.kind===card.kind && loose(sk(c.nl))!==loose(sk(card.nl)) && loose(sk(c.fr))!==loose(sk(card.fr));
+  let pool=activeCards().filter(okD); if(pool.length<3) pool=[...CARDS.values()].filter(okD);
+  const opts=shuffle([card, ...shuffle(pool).slice(0,3)]);
+  app().innerHTML = `${sessionBar()}
+    <div class="qcard pop">
+      <div class="qlabel"><span>Wat betekent dit?</span>${sayBtn(card.fr)}</div>
+      <div class="qtext fr">${esc(card.fr)}</div>
+      <div class="opts">${opts.map((o,i)=>`<button class="opt" data-i="${i}"><span>${esc(o.nl)}</span><span class="mk"></span></button>`).join('')}</div>
+      <div class="next-wrap" id="nx"></div>
+    </div>`;
+  bindQuit();
+  if (S.settings.autoSpeak) speak(card.fr);
+  let answered=false;
+  app().querySelectorAll('.opt').forEach(b=>b.onclick=()=>{
+    if(answered) return; answered=true;
+    const chosen=opts[+b.dataset.i]; const right = chosen===card;
+    app().querySelectorAll('.opt').forEach(x=>{ const o=opts[+x.dataset.i]; if(o===card){ x.classList.add('ok'); x.querySelector('.mk').textContent='✓'; } else if(x===b){ x.classList.add('bad'); x.querySelector('.mk').textContent='✗'; } else x.classList.add('dim'); });
+    record(k, right?'ok':'wrong');
+    $('.sstars').textContent='⭐ '+SES.stars;
+    if (right){ setTimeout(()=>{ if(SES && SES.current===k) nextCard(); }, 900); }
+    else { b.closest('.qcard').classList.add('shake'); $('#nx').innerHTML='<button class="btn primary block" id="b-next">Verder</button>'; $('#b-next').onclick=nextCard; $('#b-next').focus({preventScroll:true}); }
+  });
+}
+
+function accentBar(){ return `<div class="accents" aria-label="Letters met accent">${ACCENTS.map(a=>`<button type="button" data-ch="${esc(a)}" tabindex="-1">${esc(a)}</button>`).join('')}</div>`; }
+function bindAccents(scope, getInput){
+  scope.querySelectorAll('.accents button').forEach(b=>{
+    b.addEventListener('pointerdown', e=>e.preventDefault());
+    b.addEventListener('mousedown', e=>e.preventDefault());
+    b.addEventListener('click', ()=>{ const el=getInput(); if(!el || el.readOnly) return; const s=el.selectionStart ?? el.value.length, en=el.selectionEnd ?? s; el.setRangeText(b.dataset.ch, s, en, 'end'); el.dispatchEvent(new Event('input')); el.focus({preventScroll:true}); });
+  });
+}
+const INPUT_ATTRS = 'autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" enterkeyhint="go" lang="fr"';
+
+function renderTyping(k, card){
+  app().innerHTML = `${sessionBar()}
+    <div class="qcard pop" id="qc">
+      <div class="qlabel"><span>Schrijf in het Frans</span></div>
+      <div class="qtext">${esc(card.nl)}</div>
+      <form id="f" autocomplete="off">
+        <input class="answer" id="ans" type="text" ${INPUT_ATTRS} aria-label="Jouw antwoord in het Frans">
+        <div id="acc-wrap">${accentBar()}</div>
+        <div class="row" id="actions"><button type="button" class="btn ghost" id="b-idk">Weet ik niet</button><button class="btn primary" id="b-check">Controleer</button></div>
+      </form>
+      <div id="fb"></div>
+    </div>`;
+  bindQuit();
+  const inp=$('#ans'); let active=inp;
+  bindAccents(app(), ()=>active);
+  setTimeout(()=>inp.focus({preventScroll:true}), 30);
+  let phase='ask';
+  const finish=(grade)=>{ record(k, grade); $('.sstars').textContent='⭐ '+SES.stars; };
+  const check=(idk)=>{
+    if (phase!=='ask') return;
+    if (!idk && !inp.value.trim()) { inp.focus(); return; }
+    phase='fb';
+    const res = idk ? { g:'wrong', idk:true } : evaluate(card, inp.value);
+    inp.readOnly=true; inp.classList.add('s-'+res.g);
+    $('#actions').remove();
+    finish(res.g);
+    if (S.settings.autoSpeak) speak(card.fr);
+    const fbEl=$('#fb');
+    const shown = res.g==='ok' ? esc(card.fr) : (res.idk ? esc(card.fr) : diffMark(inp.value.trim(), card.fr));
+    if (res.g==='ok'){
+      $('#acc-wrap').remove();
+      fbEl.innerHTML = `<div class="fb ok pop"><div class="fb-title">${pick(PRAISE)} +2 ⭐</div>${res.note?`<div class="fb-note">${res.note}</div>`:''}<div class="fb-answer"><span>${shown}</span>${sayBtn(card.fr,'inline')}</div></div><div class="next-wrap"><button class="btn primary block" id="b-next">Verder</button></div>`;
+      phase='next';
+    } else if (res.g==='near'){
+      $('#acc-wrap').remove();
+      fbEl.innerHTML = `<div class="fb near pop"><div class="fb-title">Bijna ! +1 ⭐</div><div class="fb-note">${res.note||''}</div><div class="fb-answer"><span>${shown}</span>${sayBtn(card.fr,'inline')}</div></div><div class="next-wrap"><button class="btn primary block" id="b-next">Verder</button></div>`;
+      phase='next';
+    } else {
+      $('#qc').classList.add('shake');
+      $('#acc-wrap').remove();
+      fbEl.innerHTML = `<div class="fb wrong"><div class="fb-title">${res.idk?'Geen probleem':'Nog niet…'}</div>${res.note?`<div class="fb-note">${res.note}</div>`:''}<div class="fb-note">${res.idk?'Zo schrijf je het:':'Het juiste antwoord:'}</div><div class="fb-answer"><span>${shown}</span>${sayBtn(card.fr,'inline')}</div></div>
+        <div class="retype-label">Typ het één keer juist over:</div>
+        <form id="f2" autocomplete="off"><input class="answer" id="ans2" type="text" ${INPUT_ATTRS} aria-label="Typ het juiste antwoord over">${accentBar()}<button class="btn primary block" id="b-next" disabled>Verder</button></form>`;
+      if (res.idk) inp.style.display='none';
+      const in2=$('#ans2'); active=in2; bindAccents($('#f2'), ()=>active);
+      in2.addEventListener('input', ()=>{ $('#b-next').disabled = !retypeOk(card, in2.value); });
+      $('#f2').addEventListener('submit', e=>{ e.preventDefault(); if(retypeOk(card,in2.value)) nextCard(); else { in2.classList.remove('shake'); void in2.offsetWidth; in2.classList.add('shake'); } });
+      setTimeout(()=>in2.focus({preventScroll:true}), 30);
+      phase='retype';
+      return;
+    }
+    const nb=$('#b-next'); nb.onclick=nextCard; setTimeout(()=>nb.focus({preventScroll:true}),30);
+  };
+  $('#f').addEventListener('submit', e=>{ e.preventDefault(); if(phase==='ask') check(false); else if(phase==='next') nextCard(); });
+  $('#b-idk').onclick=()=>check(true);
+}
+
+function renderEnd(s, complete){
+  const pct = s.answered ? Math.round(100*s.ok/s.answered) : 0;
+  const streak=streakNow();
+  const title = s.mode==='practice' ? 'Goed geoefend !' : complete ? `Bravo ${esc(S.name||'')} !` : 'Tot straks !';
+  const sub = s.mode==='practice' ? 'Oefenen telt niet mee voor je planning.' : complete ? 'Je ronde voor vandaag is klaar.' : 'Je voortgang is bewaard. Je kan later verdergaan.';
+  app().innerHTML = `<div class="end">${bird('cheer')}<h1>${title}</h1><div class="muted">${sub}</div>
+    <div class="statrow"><div class="stat"><b>${s.ok}/${s.answered}</b><span>juist (${pct}%)</span></div><div class="stat"><b>+${s.stars}</b><span>sterren ⭐</span></div>${s.mode==='daily'?`<div class="stat"><b>${streak}</b><span>${streak===1?'dag':'dagen'} op rij 🔥</span></div>`:''}</div>
+    <button class="btn primary block" id="b-home">Terug naar start</button></div>`;
+  $('#b-home').onclick=renderHome; $('#b-home').focus({preventScroll:true});
+  if (complete && s.answered) confetti();
+}
+
+function renderWords(){
+  const lab={new:'nieuw',learn:'aan het leren',known:'gekend'}, cls={new:'p-new',learn:'p-learn',known:'p-known'};
+  app().innerHTML = `<div class="topbar"><button class="icon-btn" id="b-back" aria-label="Terug">${ICON_BACK}</button><h1 class="page-title" style="flex:1">Mijn woorden</h1></div>
+    <div class="legend" style="margin-top:6px"><span><i class="dot d-known"></i>gekend</span><span><i class="dot d-learn"></i>aan het leren</span><span><i class="dot d-new"></i>nieuw</span></div>
+    ${DECKS.filter(d=>S.settings.decks[d.id]!==false).map(d=>`<div class="sect"><h3><span class="ddot" style="display:inline-block;margin-right:6px;background:${d.color||'var(--orange)'}"></span>${esc(d.title)}</h3><div class="wlist">${d.cards.map(c=>{ const r=status(itemKey(c.id,'r')), w=status(itemKey(c.id,'w'));
+      return `<div class="witem">${sayBtn(c.fr)}<div class="txt"><div class="fr">${esc(c.fr)}</div><div class="nl">${esc(c.nl)}</div><div class="pills"><span class="pill ${cls[r]}" title="Frans → Nederlands">lezen: ${lab[r]}</span><span class="pill ${cls[w]}" title="Nederlands → Frans">schrijven: ${lab[w]}</span></div></div></div>`; }).join('')}</div></div>`).join('')}`;
+  $('#b-back').onclick=renderHome;
+}
+
+function renderSettings(){
+  const last = S.lastExport ? new Date(S.lastExport).toLocaleDateString('nl-BE') : 'nog nooit';
+  app().innerHTML = `<div class="topbar"><button class="icon-btn" id="b-back" aria-label="Terug">${ICON_BACK}</button><h1 class="page-title" style="flex:1">Instellingen</h1></div>
+    <div class="sect"><h3>Leren</h3><div class="panel" style="padding:4px 16px">
+      <div class="setrow"><label for="s-name">Naam</label><input class="textin" id="s-name" value="${esc(S.name||'')}" maxlength="20" autocomplete="off"></div>
+      <div class="setrow"><label>Nieuwe kaartjes per dag<span class="hint">Lezen en schrijven tellen elk apart</span></label><div class="stepper"><button id="s-minus" aria-label="Minder">−</button><b id="s-npd">${S.settings.newPerDay}</b><button id="s-plus" aria-label="Meer">+</button></div></div>
+      <div class="setrow"><label for="s-speak">Automatisch voorlezen<span class="hint">${!canSpeak?'Niet beschikbaar in deze browser':noFrenchVoice()?'Geen Franse stem gevonden: installeer er een in de spraakinstellingen van het toestel':'Stem: '+esc(frVoice?frVoice.name:'standaard Franse stem')}</span></label><input type="checkbox" class="switch" id="s-speak" ${S.settings.autoSpeak?'checked':''} ${canSpeak?'':'disabled'}></div>
+      ${canSpeak?'<div class="setrow"><span>Uitspraak testen</span><button class="btn ghost small" data-say="Bonjour ! Comment ça va ?">🔊 Bonjour</button></div>':''}
+    </div></div>
+    <div class="sect"><h3>Hoofdstukken</h3><div class="panel" style="padding:4px 16px">
+      ${DECKS.map(d=>`<div class="setrow"><label for="d-${d.id}">${esc(d.title)}<span class="hint">${d.cards.length} kaartjes</span></label><input type="checkbox" class="switch" id="d-${d.id}" data-deck="${d.id}" ${S.settings.decks[d.id]!==false?'checked':''}></div>`).join('')}
+    </div></div>
+    <div class="sect"><h3>Voortgang bewaren</h3><div class="panel">
+      <div class="muted small" style="margin-bottom:12px">Alles wordt alleen op dit toestel bewaard, in deze browser. Wis je de browsergegevens, dan is de voortgang weg. Maak daarom af en toe een back-up. Laatste back-up: <b>${last}</b>. <span id="persist-info"></span></div>
+      <div class="stack"><button class="btn primary block" id="s-export">Back-up maken</button>
+      <label class="btn ghost block" for="s-import" style="cursor:pointer">Back-up terugzetten</label><input type="file" id="s-import" accept="application/json,.json" hidden></div>
+    </div></div>
+    <div class="sect"><h3>Opnieuw beginnen</h3><div class="panel"><button class="btn ghost block" id="s-reset" style="color:var(--red)">Alle voortgang wissen</button></div></div>
+    <div class="fine">Petit à petit · herhaalplanning met FSRS (ts-fsrs, MIT-licentie). Geen accounts, geen tracking: niets verlaat dit toestel.</div>`;
+  $('#b-back').onclick=renderHome;
+  $('#s-name').addEventListener('input', e=>{ S.name=e.target.value.trim(); save(); });
+  const setN=n=>{ S.settings.newPerDay=Math.max(0,Math.min(30,n)); $('#s-npd').textContent=S.settings.newPerDay; save(); };
+  $('#s-minus').onclick=()=>setN(S.settings.newPerDay-1); $('#s-plus').onclick=()=>setN(S.settings.newPerDay+1);
+  $('#s-speak').onchange=e=>{ S.settings.autoSpeak=e.target.checked; save(); };
+  app().querySelectorAll('[data-deck]').forEach(x=>x.onchange=()=>{ S.settings.decks[x.dataset.deck]=x.checked; save(); });
+  $('#s-export').onclick=exportData;
+  $('#s-import').onchange=e=>{ const f=e.target.files[0]; if(f) importData(f); e.target.value=''; };
+  $('#s-reset').onclick=()=>{ if(confirm('Alle voortgang wissen? Sterren, reeks en planning gaan verloren.') && confirm('Echt zeker? Dit kan niet ongedaan gemaakt worden.')){ const name=S.name, settings=S.settings; S=defaultState(); S.name=name; S.settings=settings; save(); toast('Voortgang gewist.'); renderHome(); } };
+  try{ if(navigator.storage && navigator.storage.persisted) navigator.storage.persisted().then(p=>{ const el=$('#persist-info'); if(el) el.textContent = p ? 'De browser houdt deze gegevens bij plaatsgebrek bij.' : ''; }).catch(()=>{}); }catch(e){}
+}
+
+function exportData(){
+  try{
+    const t=now(); S.lastExport=t; save();
+    const payload={ app:'petit-a-petit', version:1, exportedAt:new Date(t).toISOString(), state:S };
+    const blob=new Blob([JSON.stringify(payload)],{type:'application/json'});
+    const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`petit-a-petit-backup-${dayKey(t+DAY_START_HOUR*3600e3)}.json`;
+    document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 1000);
+    toast('Back-up gemaakt. Bewaar het bestand goed.');
+    if ($('#s-export')) renderSettings();
+  }catch(e){ toast('Back-up maken lukte niet.'); }
+}
+function importData(file){
+  const r=new FileReader();
+  r.onload=()=>{ try{ const p=JSON.parse(r.result); if(!p || p.app!=='petit-a-petit' || !p.state || typeof p.state.items!=='object') throw 0;
+      if(!confirm('Deze back-up vervangt de huidige voortgang. Doorgaan?')) return;
+      S=migrate(p.state); save(); toast('Back-up teruggezet.'); renderHome();
+    }catch(e){ toast('Dit is geen geldig back-upbestand.'); } };
+  r.readAsText(file);
+}
+
+document.addEventListener('keydown', e=>{ if(SES && /^[1-4]$/.test(e.key)){ const b=app().querySelectorAll('.opt')[+e.key-1]; if(b && document.activeElement?.tagName!=='INPUT') b.click(); } });
+renderHome();
+</script>
+</body>
+</html>
