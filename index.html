@@ -199,7 +199,7 @@ const DECKS = [
     { id:'c1-24', nl:'een strand', fr:'une plage' },
     { id:'c1-02', nl:'zwemmen', fr:'nager' },
     { id:'c1-15', nl:'wandelen', fr:'se promener',
-      near:[{a:'promener', note:'Vergeet <b>se</b> niet: se promener.'}] },
+      near:[{a:'marcher', note:'Marcher is stappen. Op je kaartje staat: <b>se promener</b>.'},{a:'promener', note:'Vergeet <b>se</b> niet: se promener.'}] },
     { id:'c1-08', nl:'de natuur', fr:'la nature' },
     { id:'c1-19', nl:'de Ardennen', fr:'les Ardennes' },
     { id:'c1-11', nl:'terugkeren, thuiskomen', fr:'rentrer' },
@@ -237,7 +237,8 @@ const DECKS = [
     { id:'c2-06', nl:'een hoek', fr:'un coin' },
     { id:'c2-01', nl:'zeggen', fr:'dire' },
     { id:'c2-25', nl:'zien', fr:'voir' },
-    { id:'c2-08', nl:'werken', fr:'travailler' },
+    { id:'c2-08', nl:'werken', fr:'travailler',
+      wrong:[{a:'marcher', note:'<b>Marcher</b> is werken zoals een toestel werkt. Mensen werken: <b>travailler</b>.'}] },
     { id:'c2-13', nl:'brengen', fr:'conduire' },
     { id:'c2-28', nl:'(aan)leren', fr:'apprendre' },
     { id:'c2-02', nl:'elk(e), ieder(e)', fr:'chaque' },
@@ -287,7 +288,7 @@ const DECKS = [
     { id:'c3-23', nl:'Bedankt voor je hulp.', fr:'Merci de ton aide.' },
     { id:'c3-08', nl:'Het is middernacht.', fr:'Il est minuit.' },
   ]},
-  { id: 'c4', title: 'Hoofdstuk 4', color:'#E3B94F', cards: [
+  { id: 'c4', title: 'Hoofdstuk 4', color:'#C9A46A', cards: [
     { id:'c4-09', nl:'een boerderij', fr:'une ferme' },
     { id:'c4-27', nl:'een kinderboerderij', fr:'une ferme pour enfants' },
     { id:'c4-22', nl:'een koe', fr:'une vache' },
@@ -322,6 +323,51 @@ const DECKS = [
     { id:'c4-15', nl:'Het is niet echt vakantie.', fr:'Ce ne sont pas vraiment des vacances.' },
     { id:'c4-31', nl:'Blijf je er lang?', fr:'Tu restes longtemps là-bas ?' },
     { id:'c4-21', nl:'Ik kan niet wachten om te vertrekken.', fr:'Je suis heureux de partir !', accept:['Je suis heureuse de partir !'] },
+  ]},
+  { id: 'c5', title: 'Hoofdstuk 5', color:'#F2D33A', cards: [
+    { id:'c5-01', nl:'het geld', fr:"l'argent" },
+    { id:'c5-02', nl:'het zakgeld', fr:"l'argent de poche" },
+    { id:'c5-03', nl:'een baby', fr:'un bébé' },
+    { id:'c5-04', nl:'een dame', fr:'une dame' },
+    { id:'c5-05', nl:'een voorbeeld', fr:'un exemple' },
+    { id:'c5-06', nl:'een idee', fr:'une idée' },
+    { id:'c5-07', nl:'een bericht', fr:'un message' },
+    { id:'c5-08', nl:'een smartphone', fr:'un smartphone' },
+    { id:'c5-09', nl:'de afwas', fr:'la vaisselle' },
+    { id:'c5-10', nl:'een weekend', fr:'un weekend', accept:['un week-end'] },
+    { id:'c5-11', nl:'kopen', fr:'acheter' },
+    { id:'c5-12', nl:'(op)bellen', fr:'appeler' },
+    { id:'c5-13', nl:'versturen, verzenden', fr:'envoyer' },
+    { id:'c5-14', nl:'verdienen, winnen', fr:'gagner' },
+    { id:'c5-15', nl:'passen op', fr:'garder' },
+    { id:'c5-16', nl:'wassen', fr:'laver' },
+    { id:'c5-17', nl:'werken, functioneren', fr:'marcher',
+      wrong:[{a:'travailler', note:'<b>Travailler</b> is werken zoals mensen werken. Een toestel dat werkt: <b>marcher</b>.'}] },
+    { id:'c5-18', nl:'betalen', fr:'payer' },
+    { id:'c5-19', nl:'antwoorden', fr:'répondre' },
+    { id:'c5-20', nl:'vallen', fr:'tomber' },
+    { id:'c5-21', nl:'vinden', fr:'trouver' },
+    { id:'c5-22', nl:'genoeg', fr:'assez' },
+    { id:'c5-23', nl:'omdat', fr:'parce que' },
+    { id:'c5-24', nl:'vaak, dikwijls', fr:'souvent' },
+    { id:'c5-25', nl:'nooit', fr:'ne ... jamais', near:[{a:'jamais', note:'Vergeet <b>ne</b> niet: ne ... jamais.'}] },
+    { id:'c5-26', nl:'niemand', fr:'ne ... personne', near:[{a:'personne', note:'Vergeet <b>ne</b> niet: ne ... personne.'}] },
+    { id:'c5-27', nl:'niets', fr:'ne ... rien', near:[{a:'rien', note:'Vergeet <b>ne</b> niet: ne ... rien.'}] },
+    { id:'c5-28', nl:'iemand', fr:"quelqu'un" },
+    { id:'c5-29', nl:'iets', fr:'quelque chose' },
+    { id:'c5-30', nl:'oud', fr:'vieux, vieille', accept:['vieille, vieux'] },
+    { id:'c5-31', nl:'Bijvoorbeeld.', fr:'Par exemple.' },
+    { id:'c5-32', nl:'Ik verstuur berichten.', fr:"J'envoie des messages." },
+    { id:'c5-33', nl:'Ik bel je op.', fr:"Je t'appelle." },
+    { id:'c5-34', nl:'Je antwoordt nooit.', fr:'Tu ne réponds jamais.' },
+    { id:'c5-35', nl:'Ze koopt een nieuwe smartphone.', fr:'Elle achète un nouveau smartphone.' },
+    { id:'c5-36', nl:'Hij werkt niet meer.', fr:'Il ne marche plus.' },
+    { id:'c5-37', nl:'Hij is op de grond gevallen.', fr:'Il est tombé par terre.' },
+    { id:'c5-38', nl:'Wil je geld verdienen?', fr:"Tu veux gagner de l'argent ?" },
+    { id:'c5-39', nl:'Ik heb niet genoeg geld.', fr:"Je n'ai pas assez d'argent." },
+    { id:'c5-40', nl:'Ik doe de afwas.', fr:'Je fais la vaisselle.' },
+    { id:'c5-41', nl:'Hij wast mijn wagen.', fr:'Il lave ma voiture.' },
+    { id:'c5-42', nl:'Ik pas op de baby van de buurvrouw.', fr:'Je garde le bébé de la voisine.' },
   ]},
 ];
 
@@ -459,6 +505,7 @@ function evaluate(card, raw){
       if (ia!==ta) return { g:'wrong', note:`Let op het lidwoord: <b>${esc(ta)}</b> ${GENDER[ta]||''}` };
     }
   }
+  for (const w of card.wrong||[]) if (loose(sk(w.a))===loose(inp)) return { g:'wrong', note:w.note };
   for (const c of CARDS.values()) if (c!==card && loose(sk(c.fr))===loose(inp)) return { g:'wrong', note:`Dat is het Frans voor “${esc(c.nl)}”.` };
   return { g:'wrong' };
 }
@@ -612,7 +659,9 @@ function renderIntro(k, card){
 }
 
 function renderChoice(k, card){
-  const okD=c=>c!==card && c.kind===card.kind && loose(sk(c.nl))!==loose(sk(card.nl)) && loose(sk(c.fr))!==loose(sk(card.fr));
+  const parts=t=>String(t).split(/[,\/]/).map(x=>loose(sk(x))).filter(Boolean);
+  const share=(a,b)=>parts(a).some(x=>parts(b).includes(x));
+  const okD=c=>c!==card && c.kind===card.kind && !share(c.nl,card.nl) && !share(c.fr,card.fr);
   let pool=activeCards().filter(okD); if(pool.length<3) pool=[...CARDS.values()].filter(okD);
   const opts=shuffle([card, ...shuffle(pool).slice(0,3)]);
   app().innerHTML = `${sessionBar()}
