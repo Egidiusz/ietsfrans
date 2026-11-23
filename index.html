@@ -309,7 +309,8 @@ const DECKS = [
     { id:'c4-11', nl:'een (na)middag', fr:'un après-midi' },
     { id:'c4-26', nl:'de nacht', fr:'la nuit' },
     { id:'c4-12', nl:'duren', fr:'durer' },
-    { id:'c4-14', nl:'lang, lange tijd', fr:'longtemps' },
+    { id:'c4-14', nl:'lang, lange tijd', fr:'longtemps',
+      wrong:[{a:'long', note:'<b>Long</b> is lang zoals een lange broek. Lang in tijd: <b>longtemps</b>.'},{a:'long, longue', note:'<b>Long, longue</b> is lang zoals een lange broek. Lang in tijd: <b>longtemps</b>.'}] },
     { id:'c4-13', nl:'een bosklas', fr:'une classe verte' },
     { id:'c4-25', nl:'een les', fr:'un cours' },
     { id:'c4-17', nl:'zelfs', fr:'même' },
@@ -369,6 +370,48 @@ const DECKS = [
     { id:'c5-41', nl:'Hij wast mijn wagen.', fr:'Il lave ma voiture.' },
     { id:'c5-42', nl:'Ik pas op de baby van de buurvrouw.', fr:'Je garde le bébé de la voisine.' },
   ]},
+  { id: 'c6', title: 'Hoofdstuk 6', color:'#B83FA0', cards: [
+    { id:'c6-01', nl:'een kassa', fr:'une caisse' },
+    { id:'c6-02', nl:'een keuze', fr:'un choix' },
+    { id:'c6-03', nl:'een mode', fr:'une mode' },
+    { id:'c6-04', nl:'een broek', fr:'un pantalon' },
+    { id:'c6-05', nl:'de prijs', fr:'le prix' },
+    { id:'c6-06', nl:'een trui', fr:'un pull', accept:['un pull-over'] },
+    { id:'c6-07', nl:'de uitverkoop', fr:'les soldes' },
+    { id:'c6-08', nl:'een kledingstuk', fr:'un vêtement' },
+    { id:'c6-09', nl:'proberen, passen', fr:'essayer' },
+    { id:'c6-10', nl:'sluiten', fr:'fermer' },
+    { id:'c6-11', nl:'gesloten', fr:'fermé(e)' },
+    { id:'c6-12', nl:'open', fr:'ouvert(e)' },
+    { id:'c6-13', nl:'kort', fr:'court(e)' },
+    { id:'c6-14', nl:'lang', fr:'long, longue', accept:['longue, long'],
+      wrong:[{a:'longtemps', note:'<b>Longtemps</b> is lang in tijd. Een lange broek: <b>long, longue</b>.'}] },
+    { id:'c6-15', nl:'perfect', fr:'parfait(e)' },
+    { id:'c6-16', nl:'zwart', fr:'noir(e)' },
+    { id:'c6-17', nl:'wit', fr:'blanc, blanche', accept:['blanche, blanc'] },
+    { id:'c6-18', nl:'rood', fr:'rouge' },
+    { id:'c6-19', nl:'groen', fr:'vert(e)' },
+    { id:'c6-20', nl:'blauw', fr:'bleu(e)' },
+    { id:'c6-21', nl:'geel', fr:'jaune' },
+    { id:'c6-22', nl:'oranje', fr:'orange' },
+    { id:'c6-23', nl:'roze', fr:'rose' },
+    { id:'c6-24', nl:'paars', fr:'mauve', near:[{a:'violet', note:'Violet is ook paars, maar op je kaartje staat: <b>mauve</b>.'}] },
+    { id:'c6-25', nl:'grijs', fr:'gris(e)' },
+    { id:'c6-26', nl:'bruin', fr:'brun(e)', near:[{a:'marron', note:'Marron is ook bruin, maar op je kaartje staat: <b>brun(e)</b>.'}] },
+    { id:'c6-27', nl:'De winkel is open.', fr:'Le magasin est ouvert.' },
+    { id:'c6-28', nl:'De winkel is gesloten.', fr:'Le magasin est fermé.' },
+    { id:'c6-29', nl:'Vooruit dan maar.', fr:'Allons-y.' },
+    { id:'c6-30', nl:'Helemaal niet.', fr:'Pas du tout.' },
+    { id:'c6-31', nl:'Het is een moderne broek.', fr:"C'est un pantalon moderne." },
+    { id:'c6-32', nl:'Hij is in de mode.', fr:'Il est à la mode.' },
+    { id:'c6-33', nl:'Deze kledingstukken zijn in de uitverkoop.', fr:'Ces vêtements sont en solde.', accept:['Ces vêtements sont en soldes.'] },
+    { id:'c6-34', nl:'Heeft u een voorkeur voor een bepaalde kleur?', fr:'Vous avez une couleur préférée ?',
+      near:[{a:'Tu as une couleur préférée', note:'Bijna! Bij <b>u</b> hoort <b>vous</b>.'}] },
+    { id:'c6-35', nl:'Wilt u de broek passen?', fr:'Vous voulez essayer le pantalon ?',
+      near:[{a:'Tu veux essayer le pantalon', note:'Bijna! Bij <b>u</b> hoort <b>vous</b>.'}] },
+    { id:'c6-36', nl:'U maakt een goede keuze.', fr:'Vous faites un bon choix.',
+      near:[{a:'Tu fais un bon choix', note:'Bijna! Bij <b>u</b> hoort <b>vous</b>.'}] },
+  ]},
 ];
 
 const STORE_KEY = 'petitapetit.v1';
@@ -413,7 +456,7 @@ function speak(text){
   if(!frVoice) pickVoice();
   // Geen Franse stem op dit toestel: liever stil dan met een Engelse stem
   if(noFrenchVoice()){ if(!noVoiceWarned){ noVoiceWarned=true; toast('Geen Franse stem gevonden op dit toestel. Zie Instellingen.'); } return; }
-  try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text.replace(/[()]/g,'')); u.lang='fr-FR'; if(frVoice) u.voice=frVoice; u.rate=0.85; speechSynthesis.speak(u); }catch(e){}
+  try{ speechSynthesis.cancel(); const u=new SpeechSynthesisUtterance(text.replace(/(\S+)\(e\)/g,'$1, $1e').replace(/[()]/g,'')); u.lang='fr-FR'; if(frVoice) u.voice=frVoice; u.rate=0.85; speechSynthesis.speak(u); }catch(e){}
 }
 const ICON_SAY = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H3v6h3l5 4z" fill="currentColor"/><path d="M15.5 8.5a5 5 0 0 1 0 7M18.5 5.5a9 9 0 0 1 0 13"/></svg>';
 const sayBtn = (text, cls='') => canSpeak ? `<button type="button" class="say ${cls}" data-say="${esc(text)}" aria-label="Luister">${ICON_SAY}</button>` : '';
@@ -484,10 +527,12 @@ const noAcc = s => s.normalize('NFD').replace(/[̀-ͯ]/g,'');
 const loose = s => noAcc(s).replace(/[^a-z]/g,'');
 function splitArt(k){ const m=k.match(/^(une|un|les|le|la)\s+|^(l')/); if(!m) return [null,k]; return [m[1]||m[2], k.slice(m[0].length)]; }
 const GENDER = { un:'(mannelijk)', le:'(mannelijk)', une:'(vrouwelijk)', la:'(vrouwelijk)', les:'(meervoud)', "l'":'' };
+function variants(t){ return /\(e\)/.test(t) ? [t, t.replace(/\(e\)/g,''), t.replace(/\(e\)/g,'e'), t.replace(/(\S+)\(e\)/g,'$1, $1e')] : [t]; }
+const forms = c => [c.fr, ...(c.accept||[])].flatMap(variants);
 function evaluate(card, raw){
   const inp=sk(raw);
   if(!inp) return { g:'wrong', idk:true };
-  const targets=[card.fr, ...(card.accept||[])];
+  const targets=forms(card);
   for (const t of targets) if (sk(t)===inp) return { g:'ok' };
   for (const t of targets){ const ti=sk(t); if (loose(ti)===loose(inp)){
     if (noAcc(ti)===noAcc(inp)) return { g:'near', note:'Let op de accenten.' };
@@ -506,10 +551,10 @@ function evaluate(card, raw){
     }
   }
   for (const w of card.wrong||[]) if (loose(sk(w.a))===loose(inp)) return { g:'wrong', note:w.note };
-  for (const c of CARDS.values()) if (c!==card && loose(sk(c.fr))===loose(inp)) return { g:'wrong', note:`Dat is het Frans voor “${esc(c.nl)}”.` };
+  for (const c of CARDS.values()) if (c!==card && forms(c).some(f=>loose(sk(f))===loose(inp))) return { g:'wrong', note:`Dat is het Frans voor “${esc(c.nl)}”.` };
   return { g:'wrong' };
 }
-function retypeOk(card, raw){ const k=loose(sk(raw)); return [card.fr, ...(card.accept||[])].some(t=>loose(sk(t))===k); }
+function retypeOk(card, raw){ const k=loose(sk(raw)); return forms(card).some(t=>loose(sk(t))===k); }
 function diffMark(input, target){
   const a=[...input.toLowerCase()], b=[...target]; const bl=b.map(c=>c.toLowerCase());
   const n=a.length, m=b.length; const dp=Array.from({length:n+1},()=>new Array(m+1).fill(0));
